@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <meta name="mobile-web-app-capable" content="yes">
+	<meta id="theme-color" name="theme-color" content="#fff">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+	 <div class="select">
+    <label for="audioSource">Audio source: </label><select id="audioSource"></select>
+  </div>
+
+  <div class="select">
+    <label for="videoSource">Video source: </label><select id="videoSource"></select>
+  </div>
+    <video id="video" width="640" height="480" autoplay></video>
+	
+	<canvas id="canvas" width="640" height="480"></canvas>
+
+	<script>
+// 	window.onload = function() {
+// 		var exArray = []; //存储设备源ID  
+//     MediaStreamTrack.getSources(function (sourceInfos) {  
+//             for (var i = 0; i != sourceInfos.length; ++i) {  
+//                 var sourceInfo = sourceInfos[i];  
+//                 //这里会遍历audio,video，所以要加以区分  
+//                 if (sourceInfo.kind === 'video') {  
+//                     exArray.push(sourceInfo.id);  
+//                 }  
+//             }  
+//         });  
+
+// 	var canvas = document.getElementById("canvas"),
+// 		context = canvas.getContext("2d"),
+// 		video = document.getElementById("video"),
+// 		videoObj = { "video": {
+// 						'optional': [{  
+//                             'sourceId': exArray[0] //0为前置摄像头，1为后置  
+//                         }]}
+//                     },
+// 		errBack = function(error) {
+// 			console.log("Video capture error: ", error.code); 
+// 		};
+// //	videoObj = { "video": true };
+// 	// Put video listeners into place
+// 	if(navigator.getUserMedia) { // Standard
+// 		navigator.getUserMedia(videoObj, function(stream) {
+// 			video.src = stream;
+// 			video.play();
+// 		}, errBack);
+// 	} else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+// 		navigator.webkitGetUserMedia(videoObj, function(stream){
+// 			video.src = window.URL.createObjectURL(stream);
+// 			video.play();
+// 		}, errBack);
+// 	}
+// 	else if(navigator.mozGetUserMedia) { // Firefox-prefixed
+// 		navigator.mozGetUserMedia(videoObj, function(stream){
+// 			video.src = window.URL.createObjectURL(stream);
+// 			video.play();
+// 		}, errBack);
+// 	}
+// 	}
+
+// 		window.addEventListener("DOMContentLoaded", function() {
+// 	// Grab elements, create settings, etc.
+	
+// }, false);
+
+var videoElement = document.querySelector('video');
+var audioSelect = document.querySelector('select#audioSource');
+var videoSelect = document.querySelector('select#videoSource');
+
+navigator.getUserMedia = navigator.getUserMedia ||
+  navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+function gotSources(sourceInfos) {
+  for (var i = 0; i !== sourceInfos.length; ++i) {
+    var sourceInfo = sourceInfos[i];
+    var option = document.createElement('option');
+    option.value = sourceInfo.id;
+    if (sourceInfo.kind === 'audio') {
+      option.text = sourceInfo.label || 'microphone ' +
+        (audioSelect.length + 1);
+      audioSelect.appendChild(option);
+    } else if (sourceInfo.kind === 'video') {
+      option.text = sourceInfo.label || 'camera ' + (videoSelect.length + 1);
+      videoSelect.appendChild(option);
+    } else {
+      console.log('Some other kind of source: ', sourceInfo);
+    }
+  }
+}
+
+if (typeof MediaStreamTrack === 'undefined' ) {
+  alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
+} else {
+  MediaStreamTrack.getSources(gotSources);
+}
+
+function successCallback(stream) {
+  window.stream = stream; // make stream available to console
+  videoElement.src = window.URL.createObjectURL(stream);
+  videoElement.play();
+}
+
+function errorCallback(error) {
+  console.log('navigator.getUserMedia error: ', error);
+}
+
+function start() {
+  if (!!window.stream) {
+    videoElement.src = null;
+    window.stream.stop();
+  }
+  var audioSource = audioSelect.value;
+  var videoSource = videoSelect.value;
+  var constraints = {
+    audio: {
+      optional: [{
+        sourceId: audioSource
+      }]
+    },
+    video: {
+      optional: [{
+        sourceId: videoSource
+      }]
+    }
+  };
+  navigator.getUserMedia(constraints, successCallback, errorCallback);
+}
+
+audioSelect.onchange = start;
+videoSelect.onchange = start;
+
+start();
+
+	</script>
+  </body>
+</html>
