@@ -30,41 +30,41 @@
     <script type="text/javascript"> 
 
 // Put event listeners into place
-window.addEventListener("DOMContentLoaded", function() {
-    // Grab elements, create settings, etc.
-    var canvas = document.getElementById("canvas"),
-        context = canvas.getContext("2d"),
-        video = document.getElementById("video"),
-        videoObj = { "video": true },
-        errBack = function(error) {
-            console.log("Video capture error: ", error.code); 
-        };
+// window.addEventListener("DOMContentLoaded", function() {
+//     // Grab elements, create settings, etc.
+//     var canvas = document.getElementById("canvas"),
+//         context = canvas.getContext("2d"),
+//         video = document.getElementById("video"),
+//         videoObj = { "video": true },
+//         errBack = function(error) {
+//             console.log("Video capture error: ", error.code); 
+//         };
 
-    // Put video listeners into place
-    if(navigator.getUserMedia) { // Standard
-        navigator.getUserMedia(videoObj, function(stream) {
-            video.src = window.URL.createObjectURL(stream);
-            video.play();
-        }, errBack);
-    } else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
-        navigator.webkitGetUserMedia(videoObj, function(stream){
-            video.src = window.URL.createObjectURL(stream);
-            video.play();
-        }, errBack);
-    }
-    else if(navigator.mozGetUserMedia) { // Firefox-prefixed
-        navigator.mozGetUserMedia(videoObj, function(stream){
-            video.src = window.URL.createObjectURL(stream);
-            video.play();
-        }, errBack);
-    }
-}, false);
+//     // Put video listeners into place
+//     if(navigator.getUserMedia) { // Standard
+//         navigator.getUserMedia(videoObj, function(stream) {
+//             video.src = window.URL.createObjectURL(stream);
+//             video.play();
+//         }, errBack);
+//     } else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+//         navigator.webkitGetUserMedia(videoObj, function(stream){
+//             video.src = window.URL.createObjectURL(stream);
+//             video.play();
+//         }, errBack);
+//     }
+//     else if(navigator.mozGetUserMedia) { // Firefox-prefixed
+//         navigator.mozGetUserMedia(videoObj, function(stream){
+//             video.src = window.URL.createObjectURL(stream);
+//             video.play();
+//         }, errBack);
+//     }
+// }, false);
 
-//Trigger photo take
-document.getElementById("snap").addEventListener("click", function() {
-    context.drawImage(video, 0, 0, 640, 480);
+// //Trigger photo take
+// document.getElementById("snap").addEventListener("click", function() {
+//     context.drawImage(video, 0, 0, 640, 480);
 
-});
+// });
 
     var filename =  '/img/qrcode.png';
 
@@ -73,7 +73,7 @@ document.getElementById("snap").addEventListener("click", function() {
     image.onload = function(){
       var result;
       try{
-        qrcode.decode('/img/qrcode.png');
+        qrcode.decode('/img/ab.png');
         qrcode.callback = function(data) {
             console.log('the data is : ' + data);
         };
@@ -81,7 +81,24 @@ document.getElementById("snap").addEventListener("click", function() {
         console.log('unable to read qr code');
       }
     }
-    
+//     imageConvertToGray(context); 
+
+//     //将图片处理成黑白的（二维码扫描需要处理黑白色图片，如果仅用于拍照这一步就省略了） 
+// function imageConvertToGray(ctx){ 
+//     var length = canvas.width * canvas.height; 
+//     imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
+//     for (var i = 0; i < length * 4; i += 4) { 
+//     var myRed = imageData.data[i]; 
+//     var myGreen = imageData.data[i + 1]; 
+//     var myBlue = imageData.data[i + 2]; 
+//     myGray = parseInt((myRed + myGreen + myBlue) / 3); 
+//     imageData.data[i] = myGray; 
+//     imageData.data[i + 1] = myGray; 
+//     imageData.data[i + 2] = myGray; 
+// } 
+//     ctx.putImageData(imageData, 0, 0); 
+// }
+
     </script>  
 </body>  
 </html>  
