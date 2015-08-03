@@ -27,7 +27,7 @@
     <button id="snap">Snap Photo</button>
     <canvas id="qr-canvas" width="640" height="480"></canvas>
           
-  
+    
     <script type="text/javascript"> 
 
 // Put event listeners into place
@@ -59,16 +59,16 @@ function imageConvertToGray(ctx){
 } 
 
     function myfunc() {
-        context.drawImage(video, 0, 0, 120, 100);
+        context.drawImage(video, 0, 0, 640, 480);
         imageConvertToGray(context);
 
         try{
             qrcode.decode();
             qrcode.callback = function(data) {
+                alert(data);
                 console.log('the data is : ' + data);
             };
-          }catch(e){
-            
+          }catch(e){           
             console.log('unable to read qr code');
       }
     }
@@ -79,14 +79,14 @@ function imageConvertToGray(ctx){
             video.src = window.URL.createObjectURL(stream);
             video.play();
 
-            setInterval(myfunc,1000);//1000为1秒钟
+            setInterval(myfunc,200);//200为1秒钟
         }, errBack);
     } else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
         navigator.webkitGetUserMedia(videoObj, function(stream){
             video.src = window.URL.createObjectURL(stream);
             video.play();
 
-            setInterval(myfunc,1000);//1000为1秒钟
+            setInterval(myfunc,200);//200为1秒钟
         }, errBack);
     }
     else if(navigator.mozGetUserMedia) { // Firefox-prefixed
@@ -94,7 +94,7 @@ function imageConvertToGray(ctx){
             video.src = window.URL.createObjectURL(stream);
             video.play();
 
-            setInterval(myfunc,1000);//1000为1秒钟
+            setInterval(myfunc,200);//200为1秒钟
         }, errBack);
     }
 
