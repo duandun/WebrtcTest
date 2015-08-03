@@ -5,6 +5,7 @@
     <meta name="mobile-web-app-capable" content="yes">
 	<meta id="theme-color" name="theme-color" content="#fff">
     <link rel='stylesheet' href='/stylesheets/style.css' />
+
   </head>
   <body>
     <h1><%= title %></h1>
@@ -95,10 +96,22 @@ function gotSources(sourceInfos) {
   }
 }
 
+var exArray = [];
 if (typeof MediaStreamTrack === 'undefined' ) {
   alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
 } else {
-  MediaStreamTrack.getSources(gotSources);
+//  MediaStreamTrack.getSources(gotSources);
+      
+  MediaStreamTrack.getSources(function (sourceInfos) {  
+      alert(sourceInfos.length);
+        for (var i = 0; i != sourceInfos.length; ++i) {  
+            var sourceInfo = sourceInfos[i];  
+            //这里会遍历audio,video，所以要加以区分  
+            if (sourceInfo.kind === 'video') {  
+                exArray.push(sourceInfo.id);  
+            }  
+        }  
+    });  
 }
 
 function successCallback(stream) {
@@ -126,7 +139,8 @@ function start() {
     },
     video: {
       optional: [{
-        sourceId: videoSource
+        sourceId: exArray[1]
+       // sourceId: videoSource
       }]
     }
   };
