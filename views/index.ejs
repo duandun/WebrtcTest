@@ -5,7 +5,29 @@
     <meta name="mobile-web-app-capable" content="yes">
 	<meta id="theme-color" name="theme-color" content="#fff">
     <link rel='stylesheet' href='/stylesheets/style.css' />
+  <style>
+  div.select {
+    margin: 0 0 1em 0;
+  }
+  </style>
 
+    <script type="text/javascript" src="/js/grid.js"></script>
+    <script type="text/javascript" src="/js/version.js"></script>
+    <script type="text/javascript" src="/js/detector.js"></script>
+    <script type="text/javascript" src="/js/formatinf.js"></script>
+    <script type="text/javascript" src="/js/errorlevel.js"></script>
+    <script type="text/javascript" src="/js/bitmat.js"></script>
+    <script type="text/javascript" src="/js/datablock.js"></script>
+    <script type="text/javascript" src="/js/bmparser.js"></script>
+    <script type="text/javascript" src="/js/datamask.js"></script>
+    <script type="text/javascript" src="/js/rsdecoder.js"></script>
+    <script type="text/javascript" src="/js/gf256poly.js"></script>
+    <script type="text/javascript" src="/js/gf256.js"></script>
+    <script type="text/javascript" src="/js/decoder.js"></script>
+    <script type="text/javascript" src="/js/qrcode.js"></script>
+    <script type="text/javascript" src="/js/findpat.js"></script>
+    <script type="text/javascript" src="/js/alignpat.js"></script>
+    <script type="text/javascript" src="/js/databr.js"></script>
   </head>
   <body>
     <h1><%= title %></h1>
@@ -17,66 +39,51 @@
   <div class="select">
     <label for="videoSource">Video source: </label><select id="videoSource"></select>
   </div>
-    <video id="video" width="640" height="480" autoplay></video>
+    <video id="video" width="800" height="600" autoplay></video>
 	
-	<canvas id="canvas" width="640" height="480"></canvas>
+	<canvas id="qr-canvas" width="640" height="480"></canvas>
 
 	<script>
-// 	window.onload = function() {
-// 		var exArray = []; //存储设备源ID  
-//     MediaStreamTrack.getSources(function (sourceInfos) {  
-//             for (var i = 0; i != sourceInfos.length; ++i) {  
-//                 var sourceInfo = sourceInfos[i];  
-//                 //这里会遍历audio,video，所以要加以区分  
-//                 if (sourceInfo.kind === 'video') {  
-//                     exArray.push(sourceInfo.id);  
-//                 }  
-//             }  
-//         });  
-
-// 	var canvas = document.getElementById("canvas"),
-// 		context = canvas.getContext("2d"),
-// 		video = document.getElementById("video"),
-// 		videoObj = { "video": {
-// 						'optional': [{  
-//                             'sourceId': exArray[0] //0为前置摄像头，1为后置  
-//                         }]}
-//                     },
-// 		errBack = function(error) {
-// 			console.log("Video capture error: ", error.code); 
-// 		};
-// //	videoObj = { "video": true };
-// 	// Put video listeners into place
-// 	if(navigator.getUserMedia) { // Standard
-// 		navigator.getUserMedia(videoObj, function(stream) {
-// 			video.src = stream;
-// 			video.play();
-// 		}, errBack);
-// 	} else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
-// 		navigator.webkitGetUserMedia(videoObj, function(stream){
-// 			video.src = window.URL.createObjectURL(stream);
-// 			video.play();
-// 		}, errBack);
-// 	}
-// 	else if(navigator.mozGetUserMedia) { // Firefox-prefixed
-// 		navigator.mozGetUserMedia(videoObj, function(stream){
-// 			video.src = window.URL.createObjectURL(stream);
-// 			video.play();
-// 		}, errBack);
-// 	}
-// 	}
-
-// 		window.addEventListener("DOMContentLoaded", function() {
-// 	// Grab elements, create settings, etc.
-	
-// }, false);
-
 var videoElement = document.querySelector('video');
 var audioSelect = document.querySelector('select#audioSource');
 var videoSelect = document.querySelector('select#videoSource');
 
+var canvas = document.getElementById("qr-canvas");
+var context = canvas.getContext("2d"); 
+
+function imageConvertToGray(ctx){ 
+    var length = canvas.width * canvas.height; 
+    imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
+    for (var i = 0; i < length * 4; i += 4) { 
+        var myRed = imageData.data[i]; 
+        var myGreen = imageData.data[i + 1]; 
+        var myBlue = imageData.data[i + 2]; 
+        myGray = parseInt((myRed + myGreen + myBlue) / 3); 
+        imageData.data[i] = myGray; 
+        imageData.data[i + 1] = myGray; 
+        imageData.data[i + 2] = myGray; 
+  }     
+  ctx.putImageData(imageData, 0, 0); 
+} 
+
+function myfunc() {
+        context.drawImage(videoElement, 0, 0, 480, 640);
+        imageConvertToGray(context);
+        try{
+            qrcode.decode();
+            qrcode.callback = function(data) {
+                alert(data);
+                console.log('the data is : ' + data);
+            };
+          }catch(e){           
+            console.log('unable to read qr code');
+      }
+}
+
 navigator.getUserMedia = navigator.getUserMedia ||
   navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+var videoArray = [];
 
 function gotSources(sourceInfos) {
   for (var i = 0; i !== sourceInfos.length; ++i) {
@@ -90,34 +97,27 @@ function gotSources(sourceInfos) {
     } else if (sourceInfo.kind === 'video') {
       option.text = sourceInfo.label || 'camera ' + (videoSelect.length + 1);
       videoSelect.appendChild(option);
+      videoArray.push(option.value);
+      alert(videoArray);
     } else {
       console.log('Some other kind of source: ', sourceInfo);
     }
   }
+  start();
 }
 
-var exArray = [];
-if (typeof MediaStreamTrack === 'undefined' ) {
+if (typeof MediaStreamTrack === 'undefined' ||
+    typeof MediaStreamTrack.getSources === 'undefined') {
   alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
 } else {
-//  MediaStreamTrack.getSources(gotSources);
-      
-  MediaStreamTrack.getSources(function (sourceInfos) {  
-      alert(sourceInfos.length);
-        for (var i = 0; i != sourceInfos.length; ++i) {  
-            var sourceInfo = sourceInfos[i];  
-            //这里会遍历audio,video，所以要加以区分  
-            if (sourceInfo.kind === 'video') {  
-                exArray.push(sourceInfo.id);  
-            }  
-        }  
-    });  
+  MediaStreamTrack.getSources(gotSources);
 }
 
 function successCallback(stream) {
   window.stream = stream; // make stream available to console
   videoElement.src = window.URL.createObjectURL(stream);
   videoElement.play();
+  setInterval(myfunc, 100);//1000为1秒钟
 }
 
 function errorCallback(error) {
@@ -129,8 +129,11 @@ function start() {
     videoElement.src = null;
     window.stream.stop();
   }
+
   var audioSource = audioSelect.value;
   var videoSource = videoSelect.value;
+ // alert(videoSource);
+ //alert(videoArray[1]);
   var constraints = {
     audio: {
       optional: [{
@@ -139,8 +142,7 @@ function start() {
     },
     video: {
       optional: [{
-        sourceId: exArray[1]
-       // sourceId: videoSource
+        sourceId: videoArray[1]
       }]
     }
   };
@@ -149,8 +151,6 @@ function start() {
 
 audioSelect.onchange = start;
 videoSelect.onchange = start;
-
-start();
 
 	</script>
   </body>
