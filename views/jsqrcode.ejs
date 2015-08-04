@@ -4,6 +4,10 @@
     <title>授权页面</title>  
     <meta charset="utf-8">  
     <meta name="mobile-web-app-capable" content="yes">
+     <link rel='stylesheet' href='/libs/bootstrap/dist/css/bootstrap.css' />
+    <script type="text/javascript" src="/libs/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.js"></script>
+
     <script type="text/javascript" src="/js/grid.js"></script>
     <script type="text/javascript" src="/js/version.js"></script>
     <script type="text/javascript" src="/js/detector.js"></script>
@@ -23,19 +27,28 @@
     <script type="text/javascript" src="/js/databr.js"></script>
 
     <style>
-        canvas {
+        #qr-canvas {
             position: absolute;
-            top: 140px;
-            left: 220px;
+            top: 220px;
+            left: 240px;
         }
     </style>
 </head>  
-<body>  
-    <video id="video" width="640" height="480" autoplay></video>
-    <!-- <button id="snap">Snap Photo</button> -->
-    <canvas id="qr-canvas" width="200" height="200"></canvas>
-          
+<body class="container">  
+    <div class="row">
+        <video id="video" width="480" height="640" autoplay></video>
+        <!-- <button id="snap">Snap Photo</button> -->
+        <canvas id="qr-canvas" width="200" height="200"></canvas>
+    </div>
     
+    <div class="row">
+        <canvas id="canvasA" width="200" height="200" ></canvas>
+        <canvas id="canvasB" width="200" height="200" ></canvas>
+    </div>
+    
+    <div class="row">
+        <input type="button" value="按钮" id="btn1" class="btn btn-primary">
+    </div>
     <script type="text/javascript"> 
 
 // Put event listeners into place
@@ -53,7 +66,7 @@ window.addEventListener("DOMContentLoaded", function() {
         navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
     function imageConvertToGray(ctx){ 
-        var length = canvas.width * canvas.height; 
+        var length = canvas.width * canvas.height,
         imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
         for (var i = 0; i < length * 4; i += 4) { 
             var myRed = imageData.data[i]; 
@@ -108,13 +121,25 @@ window.addEventListener("DOMContentLoaded", function() {
     function errorCallback(error) {
       console.log('navigator.getUserMedia error: ', error);
     }
+    var btn1 = document.getElementById("btn1");
+    btn1.addEventListener('click', function() {
+        if (typeof MediaStreamTrack === 'undefined' ||
+            typeof MediaStreamTrack.getSources === 'undefined') {
+            alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
+            var constraints = {
+                video: true
+            };
+            start(constraints);
+        } else {
+          MediaStreamTrack.getSources(gotSources);
+        }
+    });
 
     function start(constraints) {
       if (!!window.stream) {
         video.src = null;
         window.stream.stop();
       }
-
 
         video.addEventListener('play', function() {
             var i = setInterval(function() {
@@ -125,6 +150,15 @@ window.addEventListener("DOMContentLoaded", function() {
                      qrcode.callback = function(data) {
                         alert(data);
                         console.log('the data is : ' + data);
+                        //video.stop();
+                        clearInterval(i);
+                        video.src = null;
+                      //  window.stream.stop();
+                        var canvasA = document.getElementById("canvasA");
+                        contextA = canvasA.getContext("2d");
+                        contextA.putImageData(context.getImageData(0,0,canvas.width, canvas.height),0,0);
+                        context.clearRect(0,0,200,200);
+                        
                         // 将解析的数据发送到服务器端
 
                         };
