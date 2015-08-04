@@ -1,9 +1,33 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>上传图片</title>
+    <title>授权页面</title>
     <meta charset="utf-8">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="授权页面">
+    <meta name="author" content="duandun">
+    <link rel='stylesheet' href='/libs/bootstrap/dist/css/bootstrap.css' />
+    <script type="text/javascript" src="/libs/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.js"></script>
+     <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+      .vertical-center{
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          
+        }
+
+        .vertical { 
+            height: 100px;/*元素的高度*/ 
+            position: absolute; 
+            top: 50%;/*元素的顶部边界离父元素的的位置是父元素高度的一半*/ 
+            margin-top: -50px;/*设置元素顶边负边距，大小为元素高度的一半*/ 
+            left: 20%;
+        }
+    </style>
     <script type="text/javascript" src="/js/grid.js"></script>
     <script type="text/javascript" src="/js/version.js"></script>
     <script type="text/javascript" src="/js/detector.js"></script>
@@ -23,80 +47,96 @@
     <script type="text/javascript" src="/js/databr.js"></script>
 </head>
 <body>
-    <iframe name="uploadfrm" id="uploadfrm" style="display: none;"></iframe>
-    <form name="formHead" method="post" action="" id="formHead" enctype="multipart/form-data" target="uploadfrm">
+   
+    <div class="navbar navbar-fixed-top navbar-inverse">
+        <div class="container">
+            <a class="brand" href="#"></a>
+        </div>
+    </div>
+  
+    <div class="container vertical">
+        <div class="col-xs-6">
+            <div id="localImag" class="row">
+                <img id="preview" width="200" height="200"  />
+            </div>
+            <div class="row form-group">
+                <input id="cameraInputA" type="file" style="display:none" name="cameraInput" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
+                <div>
+                    <a class="btn btn-primary" onclick="$('input[id=cameraInputA]').click();">点击扫描</a>
+                </div>
+            </div>
+            <input type="hidden" id="beAuthorized">
+        </div>
 
-        <div>
-            <div>
-                <!-- <input type="file" name="file_head" id="file_head" onchange="javascript:setImagePreview();" /> -->
-                <input type="file" capture="camera" accept="image/*" id="cameraInput" name="cameraInput" class="sign_file" onchange="javascript:setImagePreview();"/>
+        <div class="col-xs-6">
+            <div id="localImag" class="row">
+                <img id="preview" width="200" height="200"  />
             </div>
-            <div>
-                <!-- <div id="DivUp" style="display: none">
-                    <input type="submit" data-inline="true" id="BtnUp" value="确认上传" data-mini="true" />
-                </div> -->
+            <div class="row">
+                <input id="cameraInputB" type="file" style="display:none" name="cameraInput" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
+                <div class="input-append">
+                    <a class="btn btn-primary" onclick="$('input[id=cameraInputB]').click();">点击扫描</a>
+                </div>
             </div>
+            <input type="hidden" id="authorize">
         </div>
-    </form>
+    </div>
+
     <div data-role="fieldcontain">
-        <div id="localImag">
-            <img id="preview" width="-1" height="-1" style="display: none" />
-        </div>
-        <canvas id="qr-canvas" width="640" height="480" ></canvas>
+        <canvas id="qr-canvas" width="640" height="480" style="display: none" ></canvas>
     </div>
 
     <script type="text/javascript">  
-        function setImagePreview() {  
-            var preview, img_txt, localImag, file_head = document.getElementById("cameraInput"),  picture = file_head.value, canvas = document.getElementById("qr-canvas"), context = canvas.getContext("2d"); 
+            function setImagePreview(el) {  
+                var preview, img_txt, localImag, file_head = el,  picture = file_head.value, canvas = document.getElementById("qr-canvas"), context = canvas.getContext("2d"); 
 
-            function imageConvertToGray(ctx){ 
-                var length = canvas.width * canvas.height; 
-                imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
-                for (var i = 0; i < length * 4; i += 4) { 
-                    var myRed = imageData.data[i]; 
-                    var myGreen = imageData.data[i + 1]; 
-                    var myBlue = imageData.data[i + 2]; 
-                    myGray = parseInt((myRed + myGreen + myBlue) / 3); 
-                    imageData.data[i] = myGray; 
-                    imageData.data[i + 1] = myGray; 
-                    imageData.data[i + 2] = myGray; 
+                function imageConvertToGray(ctx){ 
+                    var length = canvas.width * canvas.height; 
+                    imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
+                    for (var i = 0; i < length * 4; i += 4) { 
+                        var myRed = imageData.data[i]; 
+                        var myGreen = imageData.data[i + 1]; 
+                        var myBlue = imageData.data[i + 2]; 
+                        myGray = parseInt((myRed + myGreen + myBlue) / 3); 
+                        imageData.data[i] = myGray; 
+                        imageData.data[i + 1] = myGray; 
+                        imageData.data[i + 2] = myGray; 
+                    } 
+                    ctx.putImageData(imageData, 0, 0); 
                 } 
-                ctx.putImageData(imageData, 0, 0); 
-            } 
 
-            if (!picture.match(/.jpg|.gif|.png|.bmp/i)) {
-                return alert("您上传的图片格式不正确，请重新选择！");  
-            }
-            
-            preview = document.getElementById("preview");
+                if (!picture.match(/.jpg|.gif|.png|.bmp/i)) {
+                    return alert("您上传的图片格式不正确，请重新选择！");  
+                }
+                
+                preview = document.getElementById("preview");
 
-            if (file_head.files && file_head.files[0]) {
-                preview.style.display = "block";
-                preview.style.width = "63px";
-                preview.style.height = "63px";
-                preview.src = window.URL.createObjectURL(file_head.files[0]);
-                var img = new Image();
-                img.src = document.getElementById('preview').src;
-                img.onload = function() {
-                    context.drawImage(img, 0,0,640,480);
-                    imageConvertToGray(context);
-                     try {
-                        qrcode.callback = function(data) {
-                            alert(data);
-                            console.log('the data is : ' + data);
-                            // 上传data信息到服务器端
-                            
+                if (file_head.files && file_head.files[0]) {
+                    preview.style.display = "block";
+                    // preview.style.width = "63px";
+                    // preview.style.height = "63px";
+                    preview.src = window.URL.createObjectURL(file_head.files[0]);
+                    var img = new Image();
+                    img.src = document.getElementById('preview').src;
+                    img.onload = function() {
+                        context.drawImage(img, 0,0,640,480);
+                        imageConvertToGray(context);
+                         try {
+                            qrcode.callback = function(data) {
+                                alert(data);
+                                console.log('the data is : ' + data);
+                                // 上传data信息到服务器端
+
+                            }
+                            qrcode.decode();      
+                        } catch(e) {
+                            console.log("fail to read qrcode: " + e);
+                            alert("二维码扫描失败！请重新进行扫描！");
+                            preview.style.display = "none";
+                            context.clearRect(0,0,640,480);
                         }
-                        qrcode.decode();      
-                    } catch(e) {
-                        console.log("fail to read qrcode: " + e);
-                        alert("二维码扫描失败！请重新进行扫描！");
-                        preview.style.display = "none";
-                        context.clearRect(0,0,640,480);
                     }
                 }
-            }
-        }  
-    </script>
-</body>
+            }  
+        </script></body>
 </html>
