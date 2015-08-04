@@ -77,12 +77,23 @@ window.addEventListener("DOMContentLoaded", function() {
           console.log('Some other kind of source: ', sourceInfo);
         }
       }
-      start();
+      var constraints = {
+            video: {
+              optional: [{
+                sourceId: videoArray[1]
+              }]
+            }
+        };
+      start(constraints);
     }
 
     if (typeof MediaStreamTrack === 'undefined' ||
         typeof MediaStreamTrack.getSources === 'undefined') {
       alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
+        var constraints = {
+            video: true
+        };
+        start(constraints);
     } else {
       MediaStreamTrack.getSources(gotSources);
     }
@@ -98,18 +109,11 @@ window.addEventListener("DOMContentLoaded", function() {
       console.log('navigator.getUserMedia error: ', error);
     }
 
-    function start() {
+    function start(constraints) {
       if (!!window.stream) {
         video.src = null;
         window.stream.stop();
       }
-      var constraints = {
-            video: {
-              optional: [{
-                sourceId: videoArray[1]
-              }]
-            }
-        };
 
 
         video.addEventListener('play', function() {
