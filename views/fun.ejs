@@ -3,7 +3,8 @@
 <head>
     <title>授权页面</title>
     <meta charset="utf-8">
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="description" content="授权页面">
     <meta name="author" content="duandun">
     <link rel='stylesheet' href='/libs/bootstrap/dist/css/bootstrap.css' />
@@ -54,10 +55,10 @@
         </div>
     </div>
   
-    <div class="container vertical">
+    <div class="container">
         <div class="col-xs-6">
             <div id="localImag" class="row">
-                <img id="preview" width="200" height="200"  />
+                <img id="preview" width="100" height="100"  />
             </div>
             <div class="row form-group">
                 <input id="cameraInputA" type="file" style="display:none" name="cameraInput" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
@@ -70,7 +71,7 @@
 
         <div class="col-xs-6">
             <div id="localImag" class="row">
-                <img id="preview" width="200" height="200"  />
+                <img id="preview" width="100" height="100"  />
             </div>
             <div class="row">
                 <input id="cameraInputB" type="file" style="display:none" name="cameraInput" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
@@ -83,7 +84,7 @@
     </div>
 
     <div data-role="fieldcontain">
-        <canvas id="qr-canvas" width="640" height="480" style="display: none" ></canvas>
+        <canvas id="qr-canvas" width="200" height="200" style="display: none" ></canvas>
     </div>
 
     <script type="text/javascript">  
