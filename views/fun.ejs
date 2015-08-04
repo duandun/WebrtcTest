@@ -3,6 +3,7 @@
 <head>
     <title>上传图片</title>
     <meta charset="utf-8">
+    <meta name="mobile-web-app-capable" content="yes">
     <script type="text/javascript" src="/js/grid.js"></script>
     <script type="text/javascript" src="/js/version.js"></script>
     <script type="text/javascript" src="/js/detector.js"></script>
@@ -27,12 +28,13 @@
 
         <div>
             <div>
-                <input type="file" name="file_head" id="file_head" onchange="javascript:setImagePreview();" />
+                <!-- <input type="file" name="file_head" id="file_head" onchange="javascript:setImagePreview();" /> -->
+                <input type="file" capture="camera" accept="image/*" id="cameraInput" name="cameraInput" class="sign_file" onchange="javascript:setImagePreview();"/>
             </div>
             <div>
-                <div id="DivUp" style="display: none">
+                <!-- <div id="DivUp" style="display: none">
                     <input type="submit" data-inline="true" id="BtnUp" value="确认上传" data-mini="true" />
-                </div>
+                </div> -->
             </div>
         </div>
     </form>
@@ -40,54 +42,61 @@
         <div id="localImag">
             <img id="preview" width="-1" height="-1" style="display: none" />
         </div>
+        <canvas id="qr-canvas" width="640" height="480" ></canvas>
     </div>
 
     <script type="text/javascript">  
         function setImagePreview() {  
-            var preview, img_txt, localImag, file_head = document.getElementById("file_head"),  
-            picture = file_head.value;  
+            var preview, img_txt, localImag, file_head = document.getElementById("cameraInput"),  picture = file_head.value, canvas = document.getElementById("qr-canvas"), context = canvas.getContext("2d"); 
 
-            function aFunc() {
-                alert(preview.src);
-            }
+            function imageConvertToGray(ctx){ 
+                var length = canvas.width * canvas.height; 
+                imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
+                for (var i = 0; i < length * 4; i += 4) { 
+                    var myRed = imageData.data[i]; 
+                    var myGreen = imageData.data[i + 1]; 
+                    var myBlue = imageData.data[i + 2]; 
+                    myGray = parseInt((myRed + myGreen + myBlue) / 3); 
+                    imageData.data[i] = myGray; 
+                    imageData.data[i + 1] = myGray; 
+                    imageData.data[i + 2] = myGray; 
+                } 
+                ctx.putImageData(imageData, 0, 0); 
+            } 
 
             if (!picture.match(/.jpg|.gif|.png|.bmp/i)) {
                 return alert("您上传的图片格式不正确，请重新选择！");  
             }
             
-            if (preview = document.getElementById("preview"), file_head.files && file_head.files[0]) preview.style.display = "block",  
-                preview.style.width = "63px",  
-            preview.style.height = "63px",  
-            preview.src = window.navigator.userAgent.indexOf("Chrome") >= 1 || window.navigator.userAgent.indexOf("Safari") >= 1 ? window.webkitURL.createObjectURL(file_head.files[0]) : window.URL.createObjectURL(file_head.files[0]);  
-         //   setTimeout(aFunc(),1000);
+            preview = document.getElementById("preview");
 
-                 // try{
-                 //        qrcode.decode(preview.src);
-                 //        qrcode.callback = function(data) {
-                 //            alert(data);
-                 //            console.log('the data is : ' + data);
-                 //        };
-                 //    }catch(e){           
-                 //        console.log('unable to read qr code');
-                 //    }
-                 else {  
-                    file_head.select(),  
-                    file_head.blur(),  
-                    img_txt = document.selection.createRange().text,  
-                    localImag = document.getElementById("localImag"),  
-                    localImag.style.width = "63px",  
-                    localImag.style.height = "63px";  
-                    try {  
-                        localImag.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)",  
-                        localImag.filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = img_txt ; 
-                    } catch(f) {  
-                        return alert("您上传的图片格式不正确，请重新选择！");
-                    }  
-                    preview.style.display = "none";
-                    document.selection.empty() ;
-                }  
-                return document.getElementById("DivUp").style.display = "block";
-            }  
+            if (file_head.files && file_head.files[0]) {
+                preview.style.display = "block";
+                preview.style.width = "63px";
+                preview.style.height = "63px";
+                preview.src = window.URL.createObjectURL(file_head.files[0]);
+                var img = new Image();
+                img.src = document.getElementById('preview').src;
+                img.onload = function() {
+                    context.drawImage(img, 0,0,640,480);
+                    imageConvertToGray(context);
+                     try {
+                        qrcode.callback = function(data) {
+                            alert(data);
+                            console.log('the data is : ' + data);
+                            // 上传data信息到服务器端
+                            
+                        }
+                        qrcode.decode();      
+                    } catch(e) {
+                        console.log("fail to read qrcode: " + e);
+                        alert("二维码扫描失败！请重新进行扫描！");
+                        preview.style.display = "none";
+                        context.clearRect(0,0,640,480);
+                    }
+                }
+            }
+        }  
     </script>
 </body>
 </html>
