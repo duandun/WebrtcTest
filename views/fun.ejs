@@ -59,39 +59,49 @@
   
     <div class="container">
         <div class="col-xs-6">
-            <div id="localImag" class="row">
-                <img id="preview" width="100" height="100"  />
+            <div  class="row">
+                <img id="previewA" width="80" height="120"  />
             </div>
-            <div class="row form-group">
-                <input id="cameraInputA" type="file" style="display:none" name="cameraInput" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
+            <div class="row">
+                <input id="cameraInputA" type="file" style="display:none" name="cameraInputA" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
                 <div>
-                    <a class="btn btn-primary" onclick="$('input[id=cameraInputA]').click();">点击扫描</a>
+                    <a class="btn btn-primary" onclick="$('input[id=cameraInputA]').click();">授权机</a>
                 </div>
             </div>
-            <input type="hidden" id="beAuthorized">
+            <input type="hidden" id="inputA">
         </div>
 
         <div class="col-xs-6">
-            <div id="localImag" class="row">
-                <img id="preview" width="100" height="100"  />
+            <div class="row">
+                <img id="previewB" width="80" height="120"  />
             </div>
             <div class="row">
-                <input id="cameraInputB" type="file" style="display:none" name="cameraInput" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
+                <input id="cameraInputB" type="file" style="display:none" name="cameraInputB" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
                 <div class="input-append">
-                    <a class="btn btn-primary" onclick="$('input[id=cameraInputB]').click();">点击扫描</a>
+                    <a class="btn btn-primary" onclick="$('input[id=cameraInputB]').click();">被授权机</a>
                 </div>
             </div>
-            <input type="hidden" id="authorize">
+            <input type="hidden" id="inputB">
         </div>
     </div>
 
-    <div data-role="fieldcontain">
-        <canvas id="qr-canvas" width="200" height="200" style="display: none" ></canvas>
+    <div data-role="fieldcontain" class="row" style="margin-left:100px;">
+        <canvas id="qr-canvas" width="100" height="100"  ></canvas>
     </div>
 
     <script type="text/javascript">  
             function setImagePreview(el) {  
-                var preview, img_txt, localImag, file_head = el,  picture = file_head.value, canvas = document.getElementById("qr-canvas"), context = canvas.getContext("2d"); 
+                var preview, img_txt, localImag, hiddenArea, file_head = el,  picture = file_head.value, canvas = document.getElementById("qr-canvas"), context = canvas.getContext("2d"); 
+
+                if (file_head.getAttribute("id")==="cameraInputA") {
+                    hiddenArea = document.getElementById("inputA");
+                    preview = document.getElementById("previewA");
+                } else if (file_head.getAttribute("id")==="cameraInputB") {
+                    hiddenArea = document.getElementById("inputB");
+                    preview = document.getElementById("previewB");
+                } else {
+                    alert("出错了！");
+                }
 
                 function imageConvertToGray(ctx){ 
                     var length = canvas.width * canvas.height; 
@@ -111,32 +121,34 @@
                 if (!picture.match(/.jpg|.gif|.png|.bmp/i)) {
                     return alert("您上传的图片格式不正确，请重新选择！");  
                 }
-                
-                preview = document.getElementById("preview");
 
                 if (file_head.files && file_head.files[0]) {
-                    preview.style.display = "block";
                     // preview.style.width = "63px";
                     // preview.style.height = "63px";
                     preview.src = window.URL.createObjectURL(file_head.files[0]);
                     var img = new Image();
-                    img.src = document.getElementById('preview').src;
+                    img.src = preview.src;
+                    var degree = 90 * Math.PI / 180;  
                     img.onload = function() {
-                        context.drawImage(img, 0,0,640,480);
+                     //   context.rotate(degree);
+                        context.drawImage(img, 0, 0, 120, 80);
                         imageConvertToGray(context);
+
                          try {
                             qrcode.callback = function(data) {
                                 alert(data);
                                 console.log('the data is : ' + data);
+                                // 将得到的data值放入到隐藏域中
+                                hiddenArea.value = data;
                                 // 上传data信息到服务器端
 
                             }
-                            qrcode.decode();      
+                            qrcode.decode(img.src);
                         } catch(e) {
+                          //  preview.src = '';
+                         //   context.clearRect(0,0,480,640);
                             console.log("fail to read qrcode: " + e);
-                            alert("二维码扫描失败！请重新进行扫描！");
-                            preview.style.display = "none";
-                            context.clearRect(0,0,640,480);
+                            alert("二维码扫描失败！请重新进行扫描！"); 
                         }
                     }
                 }

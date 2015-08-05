@@ -48,7 +48,12 @@
     </div>
     
     <div class="row">
-        <input type="button" value="按钮" id="btn1" class="btn btn-primary">
+        <div class="col-md-6">
+            <a type="button" value="授权机" id="btn1" class="btn btn-primary" href="javascript:;">授权机</a>
+        </div>
+        <div class="col-md-6">
+            <a type="button" value="被授权机" id="btn2" class="btn btn-primary" href="javascript:;">被授权机</a>  
+        </div>   
     </div>
     <script type="text/javascript"> 
 
@@ -58,7 +63,12 @@ window.addEventListener("DOMContentLoaded", function() {
     // Grab elements, create settings, etc.
     var canvas = document.getElementById("qr-canvas"),
         context = canvas.getContext("2d"),
-        video = document.getElementById("video"), videoArray = [],
+        video = document.getElementById("video"), 
+        videoArray = [],
+        btn1 = document.getElementById("btn1"),
+        btn2 = document.getElementById("btn2"),
+        canvasA = document.getElementById("canvasA"),
+        canvasB = document.getElementById("canvasB"),
         errBack = function(error) {
             console.log("Video capture error: ", error.code); 
         };
@@ -68,7 +78,7 @@ window.addEventListener("DOMContentLoaded", function() {
 
     function imageConvertToGray(ctx){ 
         var length = canvas.width * canvas.height,
-        imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
+            imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
         for (var i = 0; i < length * 4; i += 4) { 
             var myRed = imageData.data[i]; 
             var myGreen = imageData.data[i + 1]; 
@@ -101,29 +111,7 @@ window.addEventListener("DOMContentLoaded", function() {
       start(constraints);
     }
 
-    if (typeof MediaStreamTrack === 'undefined' ||
-        typeof MediaStreamTrack.getSources === 'undefined') {
-      alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
-        var constraints = {
-            video: true
-        };
-        start(constraints);
-    } else {
-      MediaStreamTrack.getSources(gotSources);
-    }
-
-    function successCallback(stream) {
-      window.stream = stream; // make stream available to console
-      video.src = window.URL.createObjectURL(stream);
-      video.play();
-   //   setInterval(myfunc, 100);//1000为1秒钟
-    }
-
-    function errorCallback(error) {
-      console.log('navigator.getUserMedia error: ', error);
-    }
-    var btn1 = document.getElementById("btn1");
-    btn1.addEventListener('click', function() {
+    function scan() {
         if (typeof MediaStreamTrack === 'undefined' ||
             typeof MediaStreamTrack.getSources === 'undefined') {
             alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
@@ -134,6 +122,65 @@ window.addEventListener("DOMContentLoaded", function() {
         } else {
           MediaStreamTrack.getSources(gotSources);
         }
+     }
+
+
+    function successCallback(stream) {
+      window.stream = stream; // make stream available to console
+      video.src = window.URL.createObjectURL(stream);
+      video.play();
+    }
+
+    function errorCallback(error) {
+      console.log('navigator.getUserMedia error: ', error);
+    }
+
+    function recEvent(canvasDis) {
+        var i = setInterval(function() {
+              //  context.drawImage(video, 140,220,200,200,0,0,200,200);
+              context.drawImage(video, 140,220,300,300,0,0,200,200);
+                //为提高速度，可以不转换为黑白图像
+               // imageConvertToGray(context);
+                 try{
+                     qrcode.callback = function(data) {
+                        alert(data);
+                        console.log('the data is : ' + data);
+                        clearInterval(i);
+                        video.src = null;
+                        contextDis = canvasDis.getContext("2d");
+                        contextDis.putImageData(context.getImageData(0,0,canvas.width, canvas.height),0,0);
+                        context.clearRect(0,0,200,200);                        
+                        // 将解析的数据发送到服务器端
+
+                        };
+                     qrcode.decode();          
+                      } catch(e) {           
+                        console.log('unable to read qr code');
+                    }
+            }, false);
+    }
+
+    // 绑定授权机按钮事件
+    btn1.addEventListener('click', function() {
+        video.removeEventListener('play');
+        video.addEventListener('play', function() {
+            recEvent(canvasA);
+        });
+        scan();
+    });
+
+    // 绑定被授权机按钮事件
+    btn2.addEventListener('click', function() {
+        video.removeEventListener('play');
+         video.addEventListener('play', function() {
+            recEvent(canvasB);
+        });
+        scan();
+    });
+
+    // 绑定扫描事件
+    video.addEventListener('play', function() {
+
     });
 
     function start(constraints) {
@@ -141,35 +188,6 @@ window.addEventListener("DOMContentLoaded", function() {
         video.src = null;
         window.stream.stop();
       }
-
-        video.addEventListener('play', function() {
-            var i = setInterval(function() {
-              //  context.drawImage(video, 140,220,200,200,0,0,200,200);
-              context.drawImage(video, 140,220,300,300,0,0,200,200);
-                //为提高速度，可以不转换为黑白
-           //     imageConvertToGray(context);
-                 try{
-                     qrcode.callback = function(data) {
-                        alert(data);
-                        console.log('the data is : ' + data);
-                        //video.stop();
-                        clearInterval(i);
-                        video.src = null;
-                        var canvasA = document.getElementById("canvasA");
-                        contextA = canvasA.getContext("2d");
-                        contextA.putImageData(context.getImageData(0,0,canvas.width, canvas.height),0,0);
-                        context.clearRect(0,0,200,200);
-                        
-                        // 将解析的数据发送到服务器端
-
-                        };
-                    qrcode.decode();          
-                      } catch(e) {           
-                        console.log('unable to read qr code');
-                    }
-            }, false);
-        });
-
         navigator.getUserMedia(constraints, successCallback, errorCallback);
     }
 }, false);
