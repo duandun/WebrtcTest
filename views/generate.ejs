@@ -57,7 +57,7 @@
         </div>
     </div>
   
-    <div class="container text-center" >
+    <div class="container">
         <div class="col-xs-6">
             <div  class="row">
                 <img id="previewA" width="80" height="120"  />
@@ -65,7 +65,7 @@
             <div class="row">
                 <input id="cameraInputA" type="file" style="display:none" name="cameraInputA" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
                 <div>
-                    <a class="btn btn-primary" onclick="$('input[id=cameraInputA]').click();" href="javascript:;">授权机</a>
+                    <a class="btn btn-primary" onclick="$('input[id=cameraInputA]').click();">授权机</a>
                 </div>
             </div>
             <input type="hidden" id="inputA">
@@ -78,27 +78,18 @@
             <div class="row">
                 <input id="cameraInputB" type="file" style="display:none" name="cameraInputB" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
                 <div class="input-append">
-                    <a class="btn btn-primary" onclick="$('input[id=cameraInputB]').click();" href="javascript:;">被授权机</a>
+                    <a class="btn btn-primary" onclick="$('input[id=cameraInputB]').click();">被授权机</a>
                 </div>
             </div>
             <input type="hidden" id="inputB">
         </div>
-        
     </div>
-    
+
     <div data-role="fieldcontain" class="row" style="margin-left:100px;">
         <canvas id="qr-canvas" width="100" height="100"  ></canvas>
     </div>
-    <div  style="margin:auto;" class="text-center">
-             <a class="btn btn-primary" onclick="javascript:send();" href="javascript:;">登陆</a>
-    </div>
+
     <script type="text/javascript">  
-            function send() {
-                if($("#inputA").val() && $("#inputB").val()) {
-                    // 发送信息
-                    alert("发送");
-                }
-            }
             function setImagePreview(el) {  
                 var preview, img_txt, localImag, hiddenArea, file_head = el,  picture = file_head.value, canvas = document.getElementById("qr-canvas"), context = canvas.getContext("2d"); 
 

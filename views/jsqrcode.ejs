@@ -5,9 +5,11 @@
     <meta charset="utf-8">  
     <meta name="mobile-web-app-capable" content="yes">
      <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,minimal-ui">
+
      <link rel='stylesheet' href='/libs/bootstrap/dist/css/bootstrap.css' />
     <script type="text/javascript" src="/libs/jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.js"></script>
+     <!-- <script type="text/javascript" src="/libs/angularjs/angular.js"></script> -->
 
     <script type="text/javascript" src="/js/grid.js"></script>
     <script type="text/javascript" src="/js/version.js"></script>
@@ -29,29 +31,37 @@
 
     <style>
         #qr-canvas {
-            position: absolute;
-            top: 100px;
-            left: 100px;
+            position: relative;
+            top: -200px;
+            z-index: 2000;
         }
     </style>
 </head>  
-<body class="container">  
+<body class="container text-center" >  
+    <div class="row" >
+        <video id="video" width="300" height="300" autoplay></video>  
+        
+    </div>
+    <canvas id="qr-canvas" width="100" height="100"></canvas>
     <div class="row">
-        <video id="video" width="300" height="300" autoplay></video>
-        <!-- <button id="snap">Snap Photo</button> -->
-        <canvas id="qr-canvas" width="100" height="100"></canvas>
+        <div class="col-xs-6">
+            <canvas id="canvasA" width="100" height="100" ></canvas>
+            <input type="hidden" id="inputA" ng-model="a" >
+        </div>
+        <div class="col-xs-6">
+            <canvas id="canvasB" width="100" height="100" ></canvas>
+            <input type="hidden" id="inputB" ng-model="b" >
+        </div>
     </div>
     
     <div class="row">
-        <canvas id="canvasA" width="100" height="100" ></canvas>
-        <canvas id="canvasB" width="100" height="100" ></canvas>
-    </div>
-    
-    <div class="row">
-        <div class="col-md-6">
+        <div class="col-xs-4">
             <a type="button" value="授权机" id="btn1" class="btn btn-primary" href="javascript:;">授权机</a>
         </div>
-        <div class="col-md-6">
+        <div class="col-xs-4">
+            <a type="button" id="send" class="btn btn-primary" href="javascript:;" onclick="javascript:send();" disabled="disabled">登陆</a>
+        </div>
+        <div class="col-xs-4">
             <a type="button" value="被授权机" id="btn2" class="btn btn-primary" href="javascript:;">被授权机</a>  
         </div>   
     </div>
@@ -60,6 +70,11 @@
 // Put event listeners into place
 
 window.addEventListener("DOMContentLoaded", function() {
+    function send() {
+        alert($("#inputA").val() + "   " + $("#inputB").val());
+       // if ()
+    }
+
     // Grab elements, create settings, etc.
     var canvas = document.getElementById("qr-canvas"),
         context = canvas.getContext("2d"),
@@ -136,6 +151,12 @@ window.addEventListener("DOMContentLoaded", function() {
     }
 
     function recEvent(canvasDis) {
+        var $input;
+        if (canvasDis.getAttribute("id")==="canvasA") {
+                $input = $("#inputA");
+        } else if (canvasDis.getAttribute("id")==="canvasB") {
+                $input = $("#inputB");
+        }
         var i = setInterval(function() {
               //  context.drawImage(video, 140,220,200,200,0,0,200,200);
               context.drawImage(video, 140,220,300,300,0,0,200,200);
@@ -145,6 +166,12 @@ window.addEventListener("DOMContentLoaded", function() {
                      qrcode.callback = function(data) {
                         alert(data);
                         console.log('the data is : ' + data);
+                        $input.val(data);
+
+                        if ($("#inputA").val() && $("#inputB").val()) {
+                            $("#send").removeAttr("disabled");
+                        }
+
                         clearInterval(i);
                         video.src = null;
                         contextDis = canvasDis.getContext("2d");
@@ -176,11 +203,6 @@ window.addEventListener("DOMContentLoaded", function() {
             recEvent(canvasB);
         });
         scan();
-    });
-
-    // 绑定扫描事件
-    video.addEventListener('play', function() {
-
     });
 
     function start(constraints) {
