@@ -14,4 +14,8 @@ router.get('/qr', function(req, res, next) {
 	res.render('jsqrcode');
 });
 
+router.get('/gen', function(req, res, next) {
+	res.render('generate');
+});
+
 module.exports = router;

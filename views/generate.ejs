@@ -12,157 +12,40 @@
     <link rel='stylesheet' href='/libs/bootstrap/dist/css/bootstrap.css' />
     <script type="text/javascript" src="/libs/jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/libs/jquery-qrcode/jquery.qrcode.min.js"></script>
+    <script type="text/javascript" src="/libs/angularjs/angular.js"></script>
      <style>
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
-      .vertical-center{
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          
-        }
-
-        .vertical { 
-            height: 100px;/*元素的高度*/ 
-            position: absolute; 
-            top: 50%;/*元素的顶部边界离父元素的的位置是父元素高度的一半*/ 
-            margin-top: -50px;/*设置元素顶边负边距，大小为元素高度的一半*/ 
-            left: 20%;
-        }
+      .row {
+        margin-top: 20px;
+      }
     </style>
-    <script type="text/javascript" src="/js/grid.js"></script>
-    <script type="text/javascript" src="/js/version.js"></script>
-    <script type="text/javascript" src="/js/detector.js"></script>
-    <script type="text/javascript" src="/js/formatinf.js"></script>
-    <script type="text/javascript" src="/js/errorlevel.js"></script>
-    <script type="text/javascript" src="/js/bitmat.js"></script>
-    <script type="text/javascript" src="/js/datablock.js"></script>
-    <script type="text/javascript" src="/js/bmparser.js"></script>
-    <script type="text/javascript" src="/js/datamask.js"></script>
-    <script type="text/javascript" src="/js/rsdecoder.js"></script>
-    <script type="text/javascript" src="/js/gf256poly.js"></script>
-    <script type="text/javascript" src="/js/gf256.js"></script>
-    <script type="text/javascript" src="/js/decoder.js"></script>
-    <script type="text/javascript" src="/js/qrcode.js"></script>
-    <script type="text/javascript" src="/js/findpat.js"></script>
-    <script type="text/javascript" src="/js/alignpat.js"></script>
-    <script type="text/javascript" src="/js/databr.js"></script>
 </head>
 <body>
-   
     <div class="navbar navbar-fixed-top navbar-inverse">
         <div class="container">
             <a class="brand" href="#"></a>
         </div>
     </div>
   
-    <div class="container">
-        <div class="col-xs-6">
-            <div  class="row">
-                <img id="previewA" width="80" height="120"  />
-            </div>
-            <div class="row">
-                <input id="cameraInputA" type="file" style="display:none" name="cameraInputA" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
-                <div>
-                    <a class="btn btn-primary" onclick="$('input[id=cameraInputA]').click();">授权机</a>
-                </div>
-            </div>
-            <input type="hidden" id="inputA">
+    <div class="container text-center" ng-app="">
+        <div class="row">
+            <input type="text" ng-model="t" id="source">
         </div>
-
-        <div class="col-xs-6">
-            <div class="row">
-                <img id="previewB" width="80" height="120"  />
-            </div>
-            <div class="row">
-                <input id="cameraInputB" type="file" style="display:none" name="cameraInputB" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
-                <div class="input-append">
-                    <a class="btn btn-primary" onclick="$('input[id=cameraInputB]').click();">被授权机</a>
-                </div>
-            </div>
-            <input type="hidden" id="inputB">
+        <div class="row">
+            <div id="qrcode"></div>
         </div>
-    </div>
-
-    <div data-role="fieldcontain" class="row" style="margin-left:100px;">
-        <canvas id="qr-canvas" width="100" height="100"  ></canvas>
+        <div class="row">
+            <a href="javascript:;" type="button" class="btn btn-primary" ng-disabled="!t" onclick="javascript:generate();">生成</a>
+        </div>
     </div>
 
     <script type="text/javascript">  
-            function setImagePreview(el) {  
-                var preview, img_txt, localImag, hiddenArea, file_head = el,  picture = file_head.value, canvas = document.getElementById("qr-canvas"), context = canvas.getContext("2d"); 
-
-                if (file_head.getAttribute("id")==="cameraInputA") {
-                    hiddenArea = document.getElementById("inputA");
-                    preview = document.getElementById("previewA");
-                } else if (file_head.getAttribute("id")==="cameraInputB") {
-                    hiddenArea = document.getElementById("inputB");
-                    preview = document.getElementById("previewB");
-                } else {
-                    alert("出错了！");
-                }
-
-                function imageConvertToGray(ctx){ 
-                    var length = canvas.width * canvas.height; 
-                    imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
-                    for (var i = 0; i < length * 4; i += 4) { 
-                        var myRed = imageData.data[i]; 
-                        var myGreen = imageData.data[i + 1]; 
-                        var myBlue = imageData.data[i + 2]; 
-                        myGray = parseInt((myRed + myGreen + myBlue) / 3); 
-                        imageData.data[i] = myGray; 
-                        imageData.data[i + 1] = myGray; 
-                        imageData.data[i + 2] = myGray; 
-                    } 
-                    ctx.putImageData(imageData, 0, 0); 
-                } 
-
-                if (!picture.match(/.jpg|.gif|.png|.bmp/i)) {
-                    return alert("您上传的图片格式不正确，请重新选择！");  
-                }
-
-                if (file_head.files && file_head.files[0]) {
-                    // preview.style.width = "63px";
-                    // preview.style.height = "63px";
-                    preview.src = window.URL.createObjectURL(file_head.files[0]);
-                    try {
-                            qrcode.callback = function(data) {
-                                if(data === "Cross domain image reading not supported in your browser! Save it to your computer then drag and drop the file!" || data === "error decoding QR Code") {                                            
-                                            hiddenArea.value = '';
-                                        //    context.clearRect(0,0,480,640);
-                                            alert("请重新扫描！ " + hiddenArea.value);
-                                            return;
-                                    }
-                                alert(data);
-                                console.log('the data is : ' + data);
-                                // 将得到的data值放入到隐藏域中
-                                hiddenArea.value = data;
-                                // 上传data信息到服务器端
-
-                            }
-                            qrcode.decode(preview.src);
-                        } catch(e) {
-                            preview.src = '';
-                            hiddenArea.value = '';
-                            context.clearRect(0,0,80,120);
-                            console.log("fail to read qrcode: " + e);
-                            alert("二维码扫描失败！请重新进行扫描！"); 
-                        }
-
-
-                   //  var img = new Image();
-                   //  img.src = preview.src;
-                   // // var degree = 90 * Math.PI / 180;  
-                   //  img.onload = function() {
-                   //   //   context.rotate(degree);
-                   //      context.drawImage(img, 0, 0, 120, 80);
-                   //      imageConvertToGray(context);
-
-                         
-                   //  }
-                }
-            }  
+        function generate() {
+            $('#qrcode').qrcode($("#source").val());
+        }
         </script>
     </body>
 </html>
