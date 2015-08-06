@@ -141,7 +141,6 @@ window.addEventListener("DOMContentLoaded", function() {
         }
      }
 
-
     function successCallback(stream) {
       window.stream = stream; // make stream available to console
       video.src = window.URL.createObjectURL(stream);
@@ -175,6 +174,8 @@ window.addEventListener("DOMContentLoaded", function() {
 
                         if ($("#inputA").val() && $("#inputB").val()) {
                             $("#send").removeAttr("disabled");
+                        } else {
+                            $("#send").attr("disabled", "disabled");
                         }
                         video.src = null;
                         
@@ -223,6 +224,7 @@ window.addEventListener("DOMContentLoaded", function() {
       }
         navigator.getUserMedia(constraints, successCallback, errorCallback);
     }
+
 }, false);
 
     </script>  
