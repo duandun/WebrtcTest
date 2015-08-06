@@ -153,11 +153,13 @@ window.addEventListener("DOMContentLoaded", function() {
     }
 
     function recEvent(canvasDis) {
-        var $input;
+        var $input, $btn;
         if (canvasDis.getAttribute("id")==="canvasA") {
                 $input = $("#inputA");
+                $btn = $("#btn1");
         } else if (canvasDis.getAttribute("id")==="canvasB") {
                 $input = $("#inputB");
+                $btn = $("#btn2");
         }
         contextDis = canvasDis.getContext("2d");
         var i = setInterval(function() {
@@ -179,6 +181,9 @@ window.addEventListener("DOMContentLoaded", function() {
                         contextDis.putImageData(context.getImageData(0,0,canvas.width, canvas.height),0,0);
                         context.clearRect(0,0,200,200); 
 
+                        $btn.css('background-color', '#CC6633');
+                        $btn.css('border-color', '#CC6633');
+
                         clearInterval(i);
                                                
                         // 将解析的数据发送到服务器端
@@ -197,6 +202,7 @@ window.addEventListener("DOMContentLoaded", function() {
         video.addEventListener('play', function() {
             recEvent(canvasA);
         });
+        this.setAttribute('style', '');
         scan();
     });
 
@@ -206,6 +212,7 @@ window.addEventListener("DOMContentLoaded", function() {
          video.addEventListener('play', function() {
             recEvent(canvasB);
         });
+        this.setAttribute('style', '');
         scan();
     });
 

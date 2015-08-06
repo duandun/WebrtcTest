@@ -68,7 +68,7 @@
             <div class="row">
                 <input id="cameraInputA" type="file" style="display:none" name="cameraInputA" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
                 <div>
-                    <a class="btn btn-primary" onclick="$('input[id=cameraInputA]').click();" href="javascript:;">授权机</a>
+                    <a class="btn btn-primary" id="btnA" onclick="$('input[id=cameraInputA]').click();" href="javascript:;">授权机</a>
                 </div>
             </div>
             <input type="hidden" id="inputA">
@@ -81,7 +81,7 @@
             <div class="row">
                 <input id="cameraInputB" type="file" style="display:none" name="cameraInputB" capture="camera" accept="image/*" onchange="javascript:setImagePreview(this);">
                 <div class="input-append">
-                    <a class="btn btn-primary" onclick="$('input[id=cameraInputB]').click();" href="javascript:;">被授权机</a>
+                    <a class="btn btn-primary" id="btnB" onclick="$('input[id=cameraInputB]').click();" href="javascript:;">被授权机</a>
                 </div>
             </div>
             <input type="hidden" id="inputB">
@@ -103,14 +103,16 @@
                 }
             }
             function setImagePreview(el) {  
-                var preview, img_txt, localImag, hiddenArea, file_head = el,  picture = file_head.value, canvas = document.getElementById("qr-canvas"), context = canvas.getContext("2d"); 
+                var preview, img_txt, btn, localImag, hiddenArea, file_head = el,  picture = file_head.value, canvas = document.getElementById("qr-canvas"), context = canvas.getContext("2d"); 
 
                 if (file_head.getAttribute("id")==="cameraInputA") {
                     hiddenArea = document.getElementById("inputA");
                     preview = document.getElementById("previewA");
+                    btn = document.getElementById("btnA");
                 } else if (file_head.getAttribute("id")==="cameraInputB") {
                     hiddenArea = document.getElementById("inputB");
                     preview = document.getElementById("previewB");
+                    btn = document.getElementById("btnB");
                 } else {
                     alert("出错了！");
                 }
@@ -144,12 +146,15 @@
                                             hiddenArea.value = '';
                                         //    context.clearRect(0,0,480,640);
                                             alert("请重新扫描！ " + hiddenArea.value);
+                                            btn.setAttribute("style", '');
                                             return;
                                     }
                                 alert(data);
                                 console.log('the data is : ' + data);
                                 // 将得到的data值放入到隐藏域中
                                 hiddenArea.value = data;
+                                btn.style.backgroundColor = "#CC6633";
+                                btn.style.borderColor = "#CC6633";
                                 // 上传data信息到服务器端
 
                             }
