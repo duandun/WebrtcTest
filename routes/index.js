@@ -18,8 +18,4 @@ router.get('/gen', function(req, res, next) {
 	res.render('generate');
 });
 
-router.get('/uc', function(req, res, next) {
-	res.render('uc');
-});
-
 module.exports = router;
