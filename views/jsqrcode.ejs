@@ -30,28 +30,29 @@
     <script type="text/javascript" src="/js/databr.js"></script>
 
     <style>
-        #qr-canvas {
-            position: relative;
-            top: -200px;
+        /*#qr-canvas {
+            position: absolute;
+            top: 150px;
+            left: 100px;
             z-index: 2000;
-        }
+        }*/
         .row {
-            margin-bottom: -20px;
+            margin-top:20px;
         }
     </style>
 </head>  
 <body class="container text-center" >  
     <div class="row" >
-        <video id="video" width="300" height="300" autoplay></video>        
+        <video id="video"  height="300" autoplay style="display:block"></video>        
     </div>
-    <canvas id="qr-canvas" width="100" height="100"></canvas>
+    <canvas id="qr-canvas" width="150" height="200"></canvas>
     <div class="row">
         <div class="col-xs-6">
-            <canvas id="canvasA" width="100" height="100" ></canvas>
+            <canvas id="canvasA" width="150" height="200" ></canvas>
             <input type="hidden" id="inputA"  >
         </div>
         <div class="col-xs-6">
-            <canvas id="canvasB" width="100" height="100" ></canvas>
+            <canvas id="canvasB" width="150" height="200" ></canvas>
             <input type="hidden" id="inputB" >
         </div>
     </div>
@@ -152,40 +153,40 @@ window.addEventListener("DOMContentLoaded", function() {
     }
 
     function recEvent(canvasDis) {
-        var $input, $btn;
+        var $input, btn;
         if (canvasDis.getAttribute("id")==="canvasA") {
                 $input = $("#inputA");
-                $btn = $("#btn1");
+                btn = document.getElementById("btn1");
         } else if (canvasDis.getAttribute("id")==="canvasB") {
                 $input = $("#inputB");
-                $btn = $("#btn2");
+                btn = document.getElementById("btn2");
         }
         contextDis = canvasDis.getContext("2d");
         var i = setInterval(function() {
-              //  context.drawImage(video, 140,220,200,200,0,0,200,200);
-              context.drawImage(video, 140,220,300,300,0,0,200,200);
+            //  context.drawImage(video, 140,220,300,300,0,0,200,200);
                 //为提高速度，可以不转换为黑白图像
-               // imageConvertToGray(context);
+               // imageConvertToGray(context);              
                  try{
+                    context.drawImage(video, 0,0, 150, 200);
                      qrcode.callback = function(data) {
                         alert(data);
                         console.log('the data is : ' + data);
                         $input.val(data);
-
+                        btn.style.backgroundColor = '#CC6633';
+                        btn.style.borderColor = '#CC6633';
                         if ($("#inputA").val() && $("#inputB").val()) {
                             $("#send").removeAttr("disabled");
                         } else {
                             $("#send").attr("disabled", "disabled");
                         }
-                        video.src = null;
-                        
+                       // video.src = '';
+                                       
                         contextDis.putImageData(context.getImageData(0,0,canvas.width, canvas.height),0,0);
-                        context.clearRect(0,0,200,200); 
-
-                        $btn.css('background-color', '#CC6633');
-                        $btn.css('border-color', '#CC6633');
-
-                        clearInterval(i);
+                        context.clearRect(0,0,150,200); 
+                        video.pause();
+                        // $btn.css('background-color', '#CC6633');
+                        // $btn.css('border-color', '#CC6633');
+                  //      clearInterval(i);
                                                
                         // 将解析的数据发送到服务器端
 
@@ -194,14 +195,18 @@ window.addEventListener("DOMContentLoaded", function() {
                       } catch(e) {           
                         console.log('unable to read qr code');
                     }
-            }, false);
+           }, 10);
     }
 
     // 绑定授权机按钮事件
     btn1.addEventListener('click', function() {
         video.removeEventListener('play');
+        video.removeEventListener('pause');
         video.addEventListener('play', function() {
             recEvent(canvasA);
+        });
+        video.addEventListener('pause', function() {
+            clearInterval(i);
         });
         this.setAttribute('style', '');
         scan();
@@ -210,8 +215,12 @@ window.addEventListener("DOMContentLoaded", function() {
     // 绑定被授权机按钮事件
     btn2.addEventListener('click', function() {
         video.removeEventListener('play');
-         video.addEventListener('play', function() {
+        video.removeEventListener('pause');
+        video.addEventListener('play', function() {
             recEvent(canvasB);
+        });
+        video.addEventListener('pause', function() {
+            clearInterval(i);
         });
         this.setAttribute('style', '');
         scan();
