@@ -14,6 +14,8 @@
     "bootstrap": "~3.3.4",
     "jquery-qrcode": "*",
     "jsqrcode": "*",
-    "angularjs": "~1.4.3"
+    "angularjs": "~1.4.3",
+    "jquery-mobile": "~1.4.5",
+    "react": "~0.13.3"
   }
 }
