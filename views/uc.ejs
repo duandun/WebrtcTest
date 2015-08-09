@@ -189,12 +189,6 @@ window.addEventListener("DOMContentLoaded", function() {
 
     // 绑定授权机按钮事件
     btn1.addEventListener('click', function() {
-        // video.removeEventListener('play', function() {
-        //     recEvent(canvasB);
-        // });
-        // video.addEventListener('play', function() {
-        //     recEvent(canvasA);
-        // });  
         $(video).one('play', function() {
             recEvent(canvasA);
         });
@@ -204,12 +198,6 @@ window.addEventListener("DOMContentLoaded", function() {
 
     // 绑定被授权机按钮事件
     btn2.addEventListener('click', function() {
-        // video.removeEventListener('play', function() {
-        //     recEvent(canvasA);
-        // });
-        // video.addEventListener('play', function() {
-        //      recEvent(canvasB);
-        //  });
         $(video).one('play', function() {
             recEvent(canvasB);
         });
