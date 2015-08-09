@@ -176,15 +176,13 @@ window.addEventListener("DOMContentLoaded", function() {
                         if ($("#inputA").val() && $("#inputB").val()) {
                             $("#send").removeAttr("disabled");
                         }
-                        video.src = null;
-                        
+                        video.src = '';
+                        video.pause();
                         contextDis.putImageData(context.getImageData(0,0,canvas.width, canvas.height),0,0);
                         context.clearRect(0,0,200,200); 
 
                         btn.style.backgroundColor = '#CC6633';
                         btn.style.borderColor = '#CC6633';
-
-                        clearInterval(i);
                                                
                         // 将解析的数据发送到服务器端
 
@@ -197,9 +195,19 @@ window.addEventListener("DOMContentLoaded", function() {
     }
 
     // 绑定授权机按钮事件
+    video.addEventListener('pause', function() {
+            clearInterval(i);
+    });
+
+    // 绑定授权机按钮事件
     btn1.addEventListener('click', function() {
-        video.removeEventListener('play');
-        video.addEventListener('play', function() {
+        // video.removeEventListener('play', function() {
+        //     recEvent(canvasB);
+        // });
+        // video.addEventListener('play', function() {
+        //     recEvent(canvasA);
+        // });  
+        $(video).one('play', function() {
             recEvent(canvasA);
         });
         this.setAttribute('style', '');
@@ -208,12 +216,17 @@ window.addEventListener("DOMContentLoaded", function() {
 
     // 绑定被授权机按钮事件
     btn2.addEventListener('click', function() {
-        video.removeEventListener('play');
-         video.addEventListener('play', function() {
+        // video.removeEventListener('play', function() {
+        //     recEvent(canvasA);
+        // });
+        // video.addEventListener('play', function() {
+        //      recEvent(canvasB);
+        //  });
+        $(video).one('play', function() {
             recEvent(canvasB);
         });
-        this.setAttribute('style', '');
-        scan();
+          this.setAttribute('style', '');
+         scan();
     });
 
     function start(constraints) {

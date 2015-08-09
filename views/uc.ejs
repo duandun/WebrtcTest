@@ -45,11 +45,11 @@
     <div class="row">
         <div class="col-xs-6">
             <canvas id="canvasA" width="100" height="100" ></canvas>
-            <input type="hidden" id="inputA" ng-model="a" >
+            <input type="hidden" id="inputA"  >
         </div>
         <div class="col-xs-6">
             <canvas id="canvasB" width="100" height="100" ></canvas>
-            <input type="hidden" id="inputB" ng-model="b" >
+            <input type="hidden" id="inputB"  >
         </div>
     </div>
     
@@ -67,12 +67,12 @@
     <script type="text/javascript"> 
 
 // Put event listeners into place
-
-window.addEventListener("DOMContentLoaded", function() {
     function send() {
         alert($("#inputA").val() + "   " + $("#inputB").val());
        // if ()
     }
+
+window.addEventListener("DOMContentLoaded", function() {
 
     // Grab elements, create settings, etc.
     var canvas = document.getElementById("qr-canvas"),
@@ -89,21 +89,6 @@ window.addEventListener("DOMContentLoaded", function() {
 
     navigator.getUserMedia = navigator.getUserMedia ||
         navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-    function imageConvertToGray(ctx){ 
-        var length = canvas.width * canvas.height,
-            imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
-        for (var i = 0; i < length * 4; i += 4) { 
-            var myRed = imageData.data[i]; 
-            var myGreen = imageData.data[i + 1]; 
-            var myBlue = imageData.data[i + 2]; 
-            myGray = parseInt((myRed + myGreen + myBlue) / 3); 
-            imageData.data[i] = myGray; 
-            imageData.data[i + 1] = myGray; 
-            imageData.data[i + 2] = myGray; 
-        } 
-        ctx.putImageData(imageData, 0, 0); 
-    } 
 
     function gotSources(sourceInfos) {
       for (var i = 0; i !== sourceInfos.length; ++i) {
@@ -126,21 +111,26 @@ window.addEventListener("DOMContentLoaded", function() {
     }
 
     function scan() {
-        if (typeof MediaStreamTrack === 'undefined' ||
-            typeof MediaStreamTrack.getSources === 'undefined') {
-            alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
-            var constraints = {
-                video: true
-            };
-            start(constraints);
-        } else {
-          MediaStreamTrack.getSources(gotSources);
-        }
+        // if (typeof MediaStreamTrack === 'undefined' ||
+        //     typeof MediaStreamTrack.getSources === 'undefined') {
+        //     alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
+        //     var constraints = {
+        //         video: true
+        //     };
+        //     start(constraints);
+        // } else {
+        //   MediaStreamTrack.getSources(gotSources);
+        // }
+
+        var constraints = {
+            video: true
+        };
+        start(constraints);
      }
 
 
     function successCallback(stream) {
-      window.stream = stream; // make stream available to console
+      window.stream = stream; // make stream available to console      
       video.src = window.URL.createObjectURL(stream);
       video.play();
     }
@@ -158,7 +148,7 @@ window.addEventListener("DOMContentLoaded", function() {
                 $input = $("#inputB");
                 btn = document.getElementById("btn2");
         }
-        var i = setInterval(function() {
+        window.i = setInterval(function() {
               //  context.drawImage(video, 140,220,200,200,0,0,200,200);
               context.drawImage(video, 140,220,300,300,0,0,100,100);
                 //为提高速度，可以不转换为黑白图像
@@ -172,18 +162,17 @@ window.addEventListener("DOMContentLoaded", function() {
                         if ($("#inputA").val() && $("#inputB").val()) {
                             $("#send").removeAttr("disabled");
                         }
-
-                        
-                        video.src = null;
-                        
+   
+                        video.src = '';
+                        video.pause(); 
                         contextDis = canvasDis.getContext("2d");
                         contextDis.putImageData(context.getImageData(0,0,canvas.width, canvas.height),0,0);
                         context.fillStyle="ffffff";//白色为例子；
-                        context.fillRect(0,0,100,100);
+                        context.fillRect(0,0,200,200);
 
                         btn.style.backgroundColor = '#CC6633';
                         btn.style.borderColor = '#CC6633'; 
-                        clearInterval(i);                       
+                    //    clearInterval(i);                       
                         // 将解析的数据发送到服务器端
 
                         };
@@ -194,10 +183,19 @@ window.addEventListener("DOMContentLoaded", function() {
             }, 20);
     }
 
+    video.addEventListener('pause', function() {
+            clearInterval(i);
+    });
+
     // 绑定授权机按钮事件
     btn1.addEventListener('click', function() {
-        video.removeEventListener('play');
-        video.addEventListener('play', function() {
+        // video.removeEventListener('play', function() {
+        //     recEvent(canvasB);
+        // });
+        // video.addEventListener('play', function() {
+        //     recEvent(canvasA);
+        // });  
+        $(video).one('play', function() {
             recEvent(canvasA);
         });
         this.setAttribute('style', '');
@@ -206,12 +204,17 @@ window.addEventListener("DOMContentLoaded", function() {
 
     // 绑定被授权机按钮事件
     btn2.addEventListener('click', function() {
-        video.removeEventListener('play');
-         video.addEventListener('play', function() {
+        // video.removeEventListener('play', function() {
+        //     recEvent(canvasA);
+        // });
+        // video.addEventListener('play', function() {
+        //      recEvent(canvasB);
+        //  });
+        $(video).one('play', function() {
             recEvent(canvasB);
         });
-         this.setAttribute('style', '');
-        scan();
+          this.setAttribute('style', '');
+         scan();
     });
 
     function start(constraints) {
