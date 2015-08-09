@@ -90,9 +90,11 @@ window.addEventListener("DOMContentLoaded", function() {
             console.log("Video capture error: ", error.code); 
         };
 
+    // 获取设备的媒体数据
     navigator.getUserMedia = navigator.getUserMedia ||
         navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
+    // 将canvas图像转换为黑白图片
     function imageConvertToGray(ctx){ 
         var length = canvas.width * canvas.height,
             imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
@@ -108,6 +110,7 @@ window.addEventListener("DOMContentLoaded", function() {
         ctx.putImageData(imageData, 0, 0); 
     } 
 
+    // 获取设备的摄像头信息id
     function gotSources(sourceInfos) {
       for (var i = 0; i !== sourceInfos.length; ++i) {
         var sourceInfo = sourceInfos[i];
@@ -128,6 +131,7 @@ window.addEventListener("DOMContentLoaded", function() {
       start(constraints);
     }
 
+    // 进行扫描任务
     function scan() {
         if (typeof MediaStreamTrack === 'undefined' ||
             typeof MediaStreamTrack.getSources === 'undefined') {
@@ -141,7 +145,7 @@ window.addEventListener("DOMContentLoaded", function() {
         }
      }
 
-
+     // 
     function successCallback(stream) {
       window.stream = stream; // make stream available to console
       video.src = window.URL.createObjectURL(stream);
@@ -152,6 +156,7 @@ window.addEventListener("DOMContentLoaded", function() {
       console.log('navigator.getUserMedia error: ', error);
     }
 
+    // 扫描二维码事件
     function recEvent(canvasDis) {
         var $input, btn;
         if (canvasDis.getAttribute("id")==="canvasA") {
@@ -162,6 +167,7 @@ window.addEventListener("DOMContentLoaded", function() {
                 btn = document.getElementById("btn2");
         }
         contextDis = canvasDis.getContext("2d");
+        // 每20毫秒取一个图像并进行二维码解析
         var i = setInterval(function() {
               //  context.drawImage(video, 140,220,200,200,0,0,200,200);
               context.drawImage(video, 140,220,300,300,0,0,200,200);
@@ -171,6 +177,8 @@ window.addEventListener("DOMContentLoaded", function() {
                      qrcode.callback = function(data) {
                         alert(data);
                         console.log('the data is : ' + data);
+                        
+                        // 解析成功后，将解析得到的数据传入到对应隐藏域中
                         $input.val(data);
 
                         if ($("#inputA").val() && $("#inputB").val()) {
@@ -180,11 +188,8 @@ window.addEventListener("DOMContentLoaded", function() {
                         video.pause();
                         contextDis.putImageData(context.getImageData(0,0,canvas.width, canvas.height),0,0);
                         context.clearRect(0,0,200,200); 
-
                         btn.style.backgroundColor = '#CC6633';
                         btn.style.borderColor = '#CC6633';
-                                               
-                        // 将解析的数据发送到服务器端
 
                         };
                      qrcode.decode();          
