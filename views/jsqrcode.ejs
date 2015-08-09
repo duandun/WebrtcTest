@@ -168,7 +168,7 @@ window.addEventListener("DOMContentLoaded", function() {
         }
         contextDis = canvasDis.getContext("2d");
         // 每20毫秒取一个图像并进行二维码解析
-        var i = setInterval(function() {
+        window.i = setInterval(function() {
               //  context.drawImage(video, 140,220,200,200,0,0,200,200);
               context.drawImage(video, 140,220,300,300,0,0,200,200);
                 //为提高速度，可以不转换为黑白图像
@@ -177,16 +177,16 @@ window.addEventListener("DOMContentLoaded", function() {
                      qrcode.callback = function(data) {
                         alert(data);
                         console.log('the data is : ' + data);
-                        
+
                         // 解析成功后，将解析得到的数据传入到对应隐藏域中
                         $input.val(data);
 
                         if ($("#inputA").val() && $("#inputB").val()) {
                             $("#send").removeAttr("disabled");
                         }
-                        video.src = '';
                         video.pause();
                         contextDis.putImageData(context.getImageData(0,0,canvas.width, canvas.height),0,0);
+                        context.fillStyle="ffffff";//白色为例子；
                         context.clearRect(0,0,200,200); 
                         btn.style.backgroundColor = '#CC6633';
                         btn.style.borderColor = '#CC6633';
