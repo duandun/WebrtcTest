@@ -1,70 +1,64 @@
-<!DOCTYPE HTML>  
-<html>  
-<head>  
-    <title>授权页面</title>  
-    <meta charset="utf-8">  
-    <meta name="mobile-web-app-capable" content="yes">
-     <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,minimal-ui">
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>授权页面</title>
+	<meta charset="utf-8">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,minimal-ui">
 
-     <link rel='stylesheet' href='/libs/bootstrap/dist/css/bootstrap.css' />
-    <script type="text/javascript" src="/libs/jquery/dist/jquery.js"></script>
-    <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.js"></script>
-     <!-- <script type="text/javascript" src="/libs/angularjs/angular.js"></script> -->
+	<link rel='stylesheet' href='/libs/bootstrap/dist/css/bootstrap.css' />
+	<script type="text/javascript" src="/libs/jquery/jquery.js"></script>
+	<script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.js"></script>
+	<!-- <script type="text/javascript" src="/libs/angularjs/angular.js"></script>
+-->
+<script type="text/javascript" src="/js/grid.js"></script>
+<script type="text/javascript" src="/js/version.js"></script>
+<script type="text/javascript" src="/js/detector.js"></script>
+<script type="text/javascript" src="/js/formatinf.js"></script>
+<script type="text/javascript" src="/js/errorlevel.js"></script>
+<script type="text/javascript" src="/js/bitmat.js"></script>
+<script type="text/javascript" src="/js/datablock.js"></script>
+<script type="text/javascript" src="/js/bmparser.js"></script>
+<script type="text/javascript" src="/js/datamask.js"></script>
+<script type="text/javascript" src="/js/rsdecoder.js"></script>
+<script type="text/javascript" src="/js/gf256poly.js"></script>
+<script type="text/javascript" src="/js/gf256.js"></script>
+<script type="text/javascript" src="/js/decoder.js"></script>
+<script type="text/javascript" src="/js/qrcode.js"></script>
+<script type="text/javascript" src="/js/findpat.js"></script>
+<script type="text/javascript" src="/js/alignpat.js"></script>
+<script type="text/javascript" src="/js/databr.js"></script>
+</head>
+<body class="container text-center" >
+<div class="row">
+	<div class="row" >
+		<video id="video"  height="200" autoplay style="display:none"></video>
+	</div>
+	<div class="page-header">
+		<canvas id="qr-canvas" width="100" height="100"></canvas>
+	</div>
+	<div class="row">
+		<div class="col-xs-6">
+			<canvas id="canvasA" width="100" height="100" ></canvas>
+			<input type="hidden" id="inputA"  ></div>
+		<div class="col-xs-6">
+			<canvas id="canvasB" width="100" height="100" ></canvas>
+			<input type="hidden" id="inputB"  ></div>
+	</div>
 
-    <script type="text/javascript" src="/js/grid.js"></script>
-    <script type="text/javascript" src="/js/version.js"></script>
-    <script type="text/javascript" src="/js/detector.js"></script>
-    <script type="text/javascript" src="/js/formatinf.js"></script>
-    <script type="text/javascript" src="/js/errorlevel.js"></script>
-    <script type="text/javascript" src="/js/bitmat.js"></script>
-    <script type="text/javascript" src="/js/datablock.js"></script>
-    <script type="text/javascript" src="/js/bmparser.js"></script>
-    <script type="text/javascript" src="/js/datamask.js"></script>
-    <script type="text/javascript" src="/js/rsdecoder.js"></script>
-    <script type="text/javascript" src="/js/gf256poly.js"></script>
-    <script type="text/javascript" src="/js/gf256.js"></script>
-    <script type="text/javascript" src="/js/decoder.js"></script>
-    <script type="text/javascript" src="/js/qrcode.js"></script>
-    <script type="text/javascript" src="/js/findpat.js"></script>
-    <script type="text/javascript" src="/js/alignpat.js"></script>
-    <script type="text/javascript" src="/js/databr.js"></script>
-
-    <style>
-        #qr-canvas {
-            position: relative;
-            top: 20px;
-        }
-    </style>
-</head>  
-<body class="container text-center" >  
-    <div class="row" >
-        <video id="video"  height="200" autoplay></video>  
-        
-    </div>
-    <canvas id="qr-canvas" width="100" height="100"></canvas>
-    <div class="row">
-        <div class="col-xs-6">
-            <canvas id="canvasA" width="100" height="100" ></canvas>
-            <input type="hidden" id="inputA"  >
-        </div>
-        <div class="col-xs-6">
-            <canvas id="canvasB" width="100" height="100" ></canvas>
-            <input type="hidden" id="inputB"  >
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-xs-4">
-            <a type="button" value="授权机" id="btn1" class="btn btn-primary" href="javascript:;">授权机</a>
-        </div>
-        <div class="col-xs-4">
-            <a type="button" id="send" class="btn btn-primary" href="javascript:;" onclick="javascript:send();" disabled="disabled">登陆</a>
-        </div>
-        <div class="col-xs-4">
-            <a type="button" value="被授权机" id="btn2" class="btn btn-primary" href="javascript:;">被授权机</a>  
-        </div>   
-    </div>
-    <script type="text/javascript"> 
+	<div class="row">
+		<div class="col-xs-4">
+			<a type="button" value="授权机" id="btn1" class="btn btn-primary" href="javascript:;">授权机</a>
+		</div>
+		<div class="col-xs-4">
+			<a type="button" id="send" class="btn btn-primary" href="javascript:;" onclick="javascript:send();" disabled="disabled">登陆</a>
+		</div>
+		<div class="col-xs-4">
+			<a type="button" value="被授权机" id="btn2" class="btn btn-primary" href="javascript:;">被授权机</a>
+		</div>
+	</div>
+</div>
+<script type="text/javascript"> 
 
 // Put event listeners into place
     function send() {
@@ -111,21 +105,21 @@ window.addEventListener("DOMContentLoaded", function() {
     }
 
     function scan() {
-        // if (typeof MediaStreamTrack === 'undefined' ||
-        //     typeof MediaStreamTrack.getSources === 'undefined') {
-        //     alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
-        //     var constraints = {
-        //         video: true
-        //     };
-        //     start(constraints);
-        // } else {
-        //   MediaStreamTrack.getSources(gotSources);
-        // }
+        if (typeof MediaStreamTrack === 'undefined' ||
+            typeof MediaStreamTrack.getSources === 'undefined') {
+            alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
+            var constraints = {
+                video: true
+            };
+            start(constraints);
+        } else {
+          MediaStreamTrack.getSources(gotSources);
+        }
 
-        var constraints = {
-            video: true
-        };
-        start(constraints);
+        // var constraints = {
+        //     video: true
+        // };
+        // start(constraints);
      }
 
 
@@ -162,13 +156,15 @@ window.addEventListener("DOMContentLoaded", function() {
                         if ($("#inputA").val() && $("#inputB").val()) {
                             $("#send").removeAttr("disabled");
                         }
-   
-                       // video.src = '';
-                        video.pause(); 
-                        contextDis = canvasDis.getContext("2d");
+
+   											contextDis = canvasDis.getContext("2d");
                         contextDis.putImageData(context.getImageData(0,0,canvas.width, canvas.height),0,0);
-                        context.fillStyle="ffffff";//白色为例子；
-                        context.fillRect(0,0,200,200);
+               //          context.fillStyle="ffffff";//白色为例子；
+     										// context.clearRect(0,0,200,200);
+                       // context.clearRect(0,0,canvas.width,canvas.height);
+                        // context.drawImage('', 140,220,300,300,0,0,100,100);
+                      //  video.src = '';
+                        video.pause(); 
 
                         btn.style.backgroundColor = '#CC6633';
                         btn.style.borderColor = '#CC6633'; 
@@ -184,7 +180,9 @@ window.addEventListener("DOMContentLoaded", function() {
     }
 
     video.addEventListener('pause', function() {
-            clearInterval(i);
+    	context.fillStyle="ffffff";//白色为例子；
+      context.clearRect(0,0,200,200);
+      clearInterval(i);
     });
 
     // 绑定授权机按钮事件
@@ -214,6 +212,6 @@ window.addEventListener("DOMContentLoaded", function() {
     }
 }, false);
 
-    </script>  
-</body>  
-</html>  
+    </script>
+</body>
+</html>

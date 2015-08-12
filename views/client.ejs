@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>客户端页面</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="客户端页面">
+    <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
+    <meta name="description" content="客户端页面">
+    <meta name="author" content="duandun">
+    <link rel='stylesheet' href='/libs/bootstrap/dist/css/bootstrap.css' />
+    <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/libs/jquery-qrcode/jquery.qrcode.min.js"></script>
+     <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+      .row {
+        margin-top: 20px;
+      }
+      .sessionIdBox {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          margin-left: -190px;
+          margin-top: -270px;
+          border-radius: 4px;
+          -moz-border-radius: 4px;
+          -webkit-border-radius: 4px;
+          background-color: #fff;
+          width: 380px;
+          height: 400px;
+          box-shadow: #999 0 2px 10px;
+          -moz-box-shadow: #999 0 2px 10px;
+          -webkit-box-shadow: #999 0 2px 10px;
+      }
+    </style>
+</head>
+<body>
+    <div class="navbar navbar-fixed-top navbar-inverse">
+        <div class="container">
+            <a class="brand" href="#"></a>
+        </div>
+    </div>
+  
+     <div class="container text-center" >
+        <div class="row">
+            <div class="sessionIdBox container">
+                <div class="qrcode row">
+                    <div id="ipInfo"></div>
+                </div>
+                <div class="row">
+                        <p>使用手机登录网站 www.abcd.com 扫描二维码</p>
+                    </div>
+            </div>
+        </div>
+       
+    </div>
+
+    <script type="text/javascript">
+        var str = 'dfs';
+        $(document).ready(function($) {
+            $('#ipInfo').empty();
+            $('#ipInfo').qrcode(str);
+        });
+    </script>
+    </body>
+</html>

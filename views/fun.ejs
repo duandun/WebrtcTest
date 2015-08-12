@@ -10,7 +10,7 @@
     <meta name="description" content="授权页面">
     <meta name="author" content="duandun">
     <link rel='stylesheet' href='/libs/bootstrap/dist/css/bootstrap.css' />
-    <script type="text/javascript" src="/libs/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
     <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.js"></script>
      <style>
       body {
@@ -99,7 +99,7 @@
             function send() {
                 if($("#inputA").val() && $("#inputB").val()) {
                     // 发送信息
-                    alert("发送");
+                    alert("发送  "+ $("#inputA").val() + " " + $("#inputB").val());
                 }
             }
             function setImagePreview(el) {  

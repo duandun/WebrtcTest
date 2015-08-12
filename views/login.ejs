@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html lang="zh_CN">
+<head>
+    <title>登录页面</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="登录页面">
+    <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/libs/font/css/font-awesome.css">
+    <meta name="description" content="登录页面">
+    <meta name="author" content="duandun">
+    <link rel='stylesheet' href='/libs/bootstrap/dist/css/bootstrap.css' />
+    <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/libs/jquery-qrcode/jquery.qrcode.min.js"></script>
+     <style>
+     
+      .row {
+        margin-top: 20px;
+      }
+      .sessionIdBox {
+      	  position: absolute;
+				  top: 50%;
+				  left: 50%;
+				  margin-left: -190px;
+				  margin-top: -350px;
+				  border-radius: 4px;
+				  -moz-border-radius: 4px;
+				  -webkit-border-radius: 4px;
+				  background-color: #fff;
+				  width: 380px;
+				  height: 700px;
+				  box-shadow: #999 0 2px 10px;
+				  -moz-box-shadow: #999 0 2px 10px;
+				  -webkit-box-shadow: #999 0 2px 10px;
+      }
+    </style>
+</head>
+<body>
+<!--     <div class="navbar navbar-fixed-top navbar-inverse">
+        <div class="container">
+            <a class="brand" href="#"></a>
+        </div>
+    </div> -->
+    <div class="container text-center" >
+        <div class="row">
+            <div class="sessionIdBox container">
+            	<div class="row">
+            		<div id="sessionId"></div>
+            	</div>
+            	<div class="row">
+        				<p><i class="fa fa-mobile"></i>使用手机登录网站 www.abcd.com 扫描二维码</p>
+        			</div>
+        			<div class="row">
+        				<div id="urlSessionId">
+        				</div>
+        			</div>
+        			<div class="row">
+        				<p>使用UC浏览器的“扫一扫”功能扫描以上二维码</p>
+        			</div>
+            </div>
+        </div>
+       
+    </div>
+
+    <script type="text/javascript">  
+    	$(document).ready(function($) {
+    		var str = 'fdasfdsafdsfsd456463dsa';
+    		var str1 = 'http://192.168.57.56:3000?sessionId=123456';
+    		$("#sessionId").empty();
+    		$("#sessionId").qrcode(str);
+
+    		$("#urlSessionId").empty();
+    		$("#urlSessionId").qrcode(str1);
+    	});
+        // function generate() {
+        //     $('#qrcode').empty();
+        //     $('#qrcode').qrcode($("#source").val());
+        // }
+        </script>
+    </body>
+</html>
