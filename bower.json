@@ -15,7 +15,6 @@
     "jquery-qrcode": "*",
     "jsqrcode": "*",
     "angularjs": "~1.4.3",
-    "jquery-mobile": "~1.4.5",
     "react": "~0.13.3",
     "font-awesome": "~4.4.0"
   }
