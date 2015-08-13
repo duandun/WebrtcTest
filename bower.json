@@ -17,6 +17,7 @@
     "angularjs": "~1.4.3",
     "react": "~0.13.3",
     "font-awesome": "~4.4.0",
-    "oridomi": "~1.1.5"
+    "oridomi": "~1.1.5",
+    "patternLock": "~0.5.0"
   }
 }

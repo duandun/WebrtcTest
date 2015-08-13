@@ -69,4 +69,8 @@ router.get('/mobile', function(req, res, next) {
 	res.render('mobile');
 });
 
+router.get('/pattern', function(req, res, next) {
+	res.render('patternLock');
+});
+
 module.exports = router;

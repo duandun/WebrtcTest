@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,minimal-ui">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="/libs/patternLock/patternLock.css">
+	<script type="text/javascript" src="/libs/jquery/dist/jquery.js"></script>
+	<script type="text/javascript" src="/libs/patternLock/patternLock.js"></script>
+</head>
+<body>
+	<div id="patternContainer"></div>
+	<script>
+		var _pattern = '';
+		var count = 0;
+		var lock = new PatternLock("#patternContainer", {
+			onDraw: function(pattern) {
+				_pattern = pattern;
+				count++;
+				//console.log(pattern);
+				setTimeout(function() {
+					lock.reset();
+					console.log(_pattern);
+					if (count === 1) {
+							lock.checkForPattern(_pattern, function() {
+							alert("You unlocked your app");
+						});
+					}
+				}, 1500);
+			}
+		});
+	</script>
+</body>
+</html>
