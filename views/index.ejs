@@ -10,7 +10,6 @@
     margin: 0 0 1em 0;
   }
   </style>
-
     <script type="text/javascript" src="/js/grid.js"></script>
     <script type="text/javascript" src="/js/version.js"></script>
     <script type="text/javascript" src="/js/detector.js"></script>
@@ -43,114 +42,146 @@
 	
 	<canvas id="qr-canvas" width="640" height="480"></canvas>
 
-	<script>
-var videoElement = document.querySelector('video');
-var audioSelect = document.querySelector('select#audioSource');
-var videoSelect = document.querySelector('select#videoSource');
+	<script type="text/javascript">
 
-var canvas = document.getElementById("qr-canvas");
-var context = canvas.getContext("2d"); 
-
-function imageConvertToGray(ctx){ 
-    var length = canvas.width * canvas.height; 
-    imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
-    for (var i = 0; i < length * 4; i += 4) { 
-        var myRed = imageData.data[i]; 
-        var myGreen = imageData.data[i + 1]; 
-        var myBlue = imageData.data[i + 2]; 
-        myGray = parseInt((myRed + myGreen + myBlue) / 3); 
-        imageData.data[i] = myGray; 
-        imageData.data[i + 1] = myGray; 
-        imageData.data[i + 2] = myGray; 
-  }     
-  ctx.putImageData(imageData, 0, 0); 
-} 
-
-function myfunc() {
-        context.drawImage(videoElement, 0, 0, 480, 640);
-        imageConvertToGray(context);
-        try{
-            qrcode.decode();
-            qrcode.callback = function(data) {
-                alert(data);
-                console.log('the data is : ' + data);
-            };
-          }catch(e){           
-            console.log('unable to read qr code');
-      }
-}
-
-navigator.getUserMedia = navigator.getUserMedia ||
-  navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-var videoArray = [];
-
-function gotSources(sourceInfos) {
-  for (var i = 0; i !== sourceInfos.length; ++i) {
-    var sourceInfo = sourceInfos[i];
-    var option = document.createElement('option');
-    option.value = sourceInfo.id;
-    if (sourceInfo.kind === 'audio') {
-      option.text = sourceInfo.label || 'microphone ' +
-        (audioSelect.length + 1);
-      audioSelect.appendChild(option);
-    } else if (sourceInfo.kind === 'video') {
-      option.text = sourceInfo.label || 'camera ' + (videoSelect.length + 1);
-      videoSelect.appendChild(option);
-      videoArray.push(option.value);
-      alert(videoArray);
-    } else {
-      console.log('Some other kind of source: ', sourceInfo);
-    }
-  }
-  start();
-}
-
-if (typeof MediaStreamTrack === 'undefined' ||
-    typeof MediaStreamTrack.getSources === 'undefined') {
-  alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
-} else {
-  MediaStreamTrack.getSources(gotSources);
-}
-
-function successCallback(stream) {
-  window.stream = stream; // make stream available to console
-  videoElement.src = window.URL.createObjectURL(stream);
-  videoElement.play();
-  setInterval(myfunc, 100);//1000为1秒钟
-}
-
-function errorCallback(error) {
-  console.log('navigator.getUserMedia error: ', error);
-}
-
-function start() {
-  if (!!window.stream) {
-    videoElement.src = null;
-    window.stream.stop();
-  }
-
-  var audioSource = audioSelect.value;
-  var videoSource = videoSelect.value;
- // alert(videoSource);
- //alert(videoArray[1]);
-  var constraints = {
-    audio: {
-      optional: [{
-        sourceId: audioSource
-      }]
-    },
-    video: {
-      optional: [{
-        sourceId: videoArray[1]
-      }]
-    }
+  //判断访问终端
+  var browser={
+      versions: function(){
+          var u = navigator.userAgent, app = navigator.appVersion;
+        //  var u = req.get('User-Agent');
+          return {
+              trident: u.indexOf('Trident') > -1, //IE内核
+              presto: u.indexOf('Presto') > -1, //opera内核
+              webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+              gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1,//火狐内核
+              mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+              ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+              android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+              iPhone: u.indexOf('iPhone') > -1 , //是否为iPhone或者QQHD浏览器
+              iPad: u.indexOf('iPad') > -1, //是否iPad
+              webApp: u.indexOf('Safari') == -1, //是否web应该程序，没有头部与底部
+              weixin: u.indexOf('MicroMessenger') > -1, //是否微信 （2015-01-22新增）
+              qq: u.match(/\sQQ/i) == " qq" //是否QQ
+          };
+      }()
   };
-  navigator.getUserMedia(constraints, successCallback, errorCallback);
-}
 
-audioSelect.onchange = start;
-videoSelect.onchange = start;
+window.addEventListener("DOMContentLoaded", function() {
+  if (browser.versions.ios) {
+    alert('hh');
+    window.location.href="/fun"; 
+  }
+  if (browser.versions.android) {
+    window.location.href="/uc";
+  }
+});
+// var videoElement = document.querySelector('video');
+// var audioSelect = document.querySelector('select#audioSource');
+// var videoSelect = document.querySelector('select#videoSource');
+
+// var canvas = document.getElementById("qr-canvas");
+// var context = canvas.getContext("2d"); 
+
+// function imageConvertToGray(ctx){ 
+//     var length = canvas.width * canvas.height; 
+//     imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
+//     for (var i = 0; i < length * 4; i += 4) { 
+//         var myRed = imageData.data[i]; 
+//         var myGreen = imageData.data[i + 1]; 
+//         var myBlue = imageData.data[i + 2]; 
+//         myGray = parseInt((myRed + myGreen + myBlue) / 3); 
+//         imageData.data[i] = myGray; 
+//         imageData.data[i + 1] = myGray; 
+//         imageData.data[i + 2] = myGray; 
+//   }     
+//   ctx.putImageData(imageData, 0, 0); 
+// } 
+
+// function myfunc() {
+//         context.drawImage(videoElement, 0, 0, 480, 640);
+//         imageConvertToGray(context);
+//         try{
+//             qrcode.decode();
+//             qrcode.callback = function(data) {
+//                 alert(data);
+//                 console.log('the data is : ' + data);
+//             };
+//           }catch(e){           
+//             console.log('unable to read qr code');
+//       }
+// }
+
+// navigator.getUserMedia = navigator.getUserMedia ||
+//   navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+// var videoArray = [];
+
+// function gotSources(sourceInfos) {
+//   for (var i = 0; i !== sourceInfos.length; ++i) {
+//     var sourceInfo = sourceInfos[i];
+//     var option = document.createElement('option');
+//     option.value = sourceInfo.id;
+//     if (sourceInfo.kind === 'audio') {
+//       option.text = sourceInfo.label || 'microphone ' +
+//         (audioSelect.length + 1);
+//       audioSelect.appendChild(option);
+//     } else if (sourceInfo.kind === 'video') {
+//       option.text = sourceInfo.label || 'camera ' + (videoSelect.length + 1);
+//       videoSelect.appendChild(option);
+//       videoArray.push(option.value);
+//       alert(videoArray);
+//     } else {
+//       console.log('Some other kind of source: ', sourceInfo);
+//     }
+//   }
+//   start();
+// }
+
+// if (typeof MediaStreamTrack === 'undefined' ||
+//     typeof MediaStreamTrack.getSources === 'undefined') {
+//   alert('This browser does not support MediaStreamTrack.\n\nTry Chrome.');
+// } else {
+//   MediaStreamTrack.getSources(gotSources);
+// }
+
+// function successCallback(stream) {
+//   window.stream = stream; // make stream available to console
+//   videoElement.src = window.URL.createObjectURL(stream);
+//   videoElement.play();
+//   setInterval(myfunc, 100);//1000为1秒钟
+// }
+
+// function errorCallback(error) {
+//   console.log('navigator.getUserMedia error: ', error);
+// }
+
+// function start() {
+//   if (!!window.stream) {
+//     videoElement.src = null;
+//     window.stream.stop();
+//   }
+
+//   var audioSource = audioSelect.value;
+//   var videoSource = videoSelect.value;
+//  // alert(videoSource);
+//  //alert(videoArray[1]);
+//   var constraints = {
+//     audio: {
+//       optional: [{
+//         sourceId: audioSource
+//       }]
+//     },
+//     video: {
+//       optional: [{
+//         sourceId: videoArray[1]
+//       }]
+//     }
+//   };
+//   navigator.getUserMedia(constraints, successCallback, errorCallback);
+// }
+
+// audioSelect.onchange = start;
+// videoSelect.onchange = start;
 
 	</script>
   </body>

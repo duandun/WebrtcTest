@@ -57,7 +57,7 @@
 
   <div class="row">
     <div style="margin-top:20px;">
-      <a type="button" id="send" class="btn btn-primary" href="javascript:;" onclick="javascript:send();" disabled="disabled">登陆</a>
+      <button role="button" id="send" class="btn btn-primary"  disabled="disabled">登陆</button>
     </div>
   </div>
 </div>
@@ -65,8 +65,9 @@
 
     var sessionId = null;
     //点击登录，向服务器发送信息
-    function send() {
-        alert($("#inputA").val() + "   " + $("#inputB").val());
+    $("#send").click(function(e) {
+      e.stopPropagation();
+      alert($("#inputA").val() + "   " + $("#inputB").val());
         if ($("#inputA").val()&&$("#inputB".val())) {
           $.ajax({
             url: '',
@@ -81,7 +82,7 @@
             }
           });
        }
-    }
+    });
 
 window.addEventListener("DOMContentLoaded", function() {
     if (!sessionId && typeof(sessionId)!="undefined" && sessionId!=0) {
@@ -208,7 +209,6 @@ window.addEventListener("DOMContentLoaded", function() {
     }
 
     video.addEventListener('pause', function() {
-    	context.fillStyle="ffffff";//白色为例子；
       context.clearRect(0,0,200,200);
       clearInterval(i);
     });
