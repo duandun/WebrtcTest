@@ -14,7 +14,8 @@
     <script type="text/javascript" src="/libs/jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.js"></script>
     <script type="text/javascript" src="/libs/jquery-qrcode/jquery.qrcode.min.js"></script>
-     <style>
+    <script type="text/javascript" src="/libs/oridomi/oridomi.js"></script>
+    <style>
      
       .row {
         margin-top: 20px;
@@ -24,13 +25,13 @@
 		  top: 50%;
 		  left: 50%;
 		  margin-left: -190px;
-		  margin-top: -240px;
+		  margin-top: -230px;
 		  border-radius: 4px;
 		  -moz-border-radius: 4px;
 		  -webkit-border-radius: 4px;
 		  background-color: #fff;
 		  width: 380px;
-		  height: 480px;
+		  height: 460px;
 		  box-shadow: #999 0 2px 10px;
 		  -moz-box-shadow: #999 0 2px 10px;
 		  -webkit-box-shadow: #999 0 2px 10px;
@@ -44,11 +45,8 @@
         float: left;
       }
       #urlSessionId canvas {
-        width: 56px;
-        height: 56px;
-        float: left; 
-        margin-right: 20px;
-        margin-left: -10px;
+        width: 100px;
+        height: 100px;
       }
       p.title {
         margin: 0;
@@ -79,13 +77,17 @@
                         </div>
                         
         		</div>
-    			<div class="row" style="display: inline-block">
+                <hr>
+                <!-- <a class="btn btn-primary" role="button" id="btn1" data-toggle="collapse" href="#page" aria-expanded="false" aria-controls="page">按钮</a> -->
+                <a class="btn btn-primary" role="button" data-toggle="collapse" href="#page" aria-expanded="false" aria-controls="page">
+                    UC 浏览器
+                </a>
+    			<div class="row collapse well" id="page" aria-expanded="false">                    
+                    <div class="cont">           
+                        <p class="text-center">使用 UC 浏览器“扫一扫”功能扫描以下二维码</p>
+                    </div>     
                     <div id="urlSessionId">
-                    </div>
-                    <div class="cont">      
-                                    
-                        <p>使用 UC 浏览器“扫一扫”功能扫描左侧二维码</p>
-                    </div>       				
+                    </div> 				
     			</div>
             </div>
         </div>
@@ -96,16 +98,45 @@
     	$(document).ready(function($) {
     		var str = 'fdasfdsafdsfsd456463dsa';
     		var str1 = 'http://192.168.57.56:3000?sessionId=123456';
+             
+         //   folded.stairs(20, 'bottom');
+         //   folded.reveal(30, 'top');
+            // folded.curl(50).collapse().setSpeed(2000).stairs(-29).foldUp().unfold();
     		$("#sessionId").empty();
     		$("#sessionId").qrcode(str);
 
     		$("#urlSessionId").empty();
     		$("#urlSessionId").qrcode(str1);
+
+            $('#page').on('show.bs.collapse', function () {
+              // $("#sessionId canvas").hide();
+            });
+            // $("#btn1").click(function() {
+            //     //window.location.href="/loginok"; 
+                
+            // });
+            
+            
+            // window.k = setInterval(function() {
+            //     $.ajax({
+            //         url: "",
+            //         dataType: "json",
+            //         type: "get",
+            //         success: function(data) {
+            //             if (data === "ok") {
+            //   
+            //                 window.location.href="/loginok"; 
+            //                 return;
+            //             }
+            //         },
+            //         error: function(data) {
+            //             alert("出错了！");
+            //             console.log(data);
+            //         }
+            //     });
+            // }, 1000);
+
     	});
-        // function generate() {
-        //     $('#qrcode').empty();
-        //     $('#qrcode').qrcode($("#source").val());
-        // }
         </script>
     </body>
 </html>

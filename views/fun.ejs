@@ -31,23 +31,23 @@
             left: 20%;
         }
     </style>
-    <script type="text/javascript" src="/js/grid.js"></script>
-    <script type="text/javascript" src="/js/version.js"></script>
-    <script type="text/javascript" src="/js/detector.js"></script>
-    <script type="text/javascript" src="/js/formatinf.js"></script>
-    <script type="text/javascript" src="/js/errorlevel.js"></script>
-    <script type="text/javascript" src="/js/bitmat.js"></script>
-    <script type="text/javascript" src="/js/datablock.js"></script>
-    <script type="text/javascript" src="/js/bmparser.js"></script>
-    <script type="text/javascript" src="/js/datamask.js"></script>
-    <script type="text/javascript" src="/js/rsdecoder.js"></script>
-    <script type="text/javascript" src="/js/gf256poly.js"></script>
-    <script type="text/javascript" src="/js/gf256.js"></script>
-    <script type="text/javascript" src="/js/decoder.js"></script>
-    <script type="text/javascript" src="/js/qrcode.js"></script>
-    <script type="text/javascript" src="/js/findpat.js"></script>
-    <script type="text/javascript" src="/js/alignpat.js"></script>
-    <script type="text/javascript" src="/js/databr.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/grid.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/version.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/detector.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/formatinf.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/errorlevel.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/bitmat.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/datablock.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/bmparser.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/datamask.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/rsdecoder.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/gf256poly.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/gf256.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/decoder.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/qrcode.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/findpat.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/alignpat.js"></script>
+  <script type="text/javascript" src="/libs/jsqrcode/src/databr.js"></script>
 <!--     // <script type="text/javascript" src="/js/version.js"></script>
     // <script type="text/javascript" src="/js/qrcode.js"></script>
     // <script type="text/javascript" src="/js/main.min.js"></script> -->
@@ -61,7 +61,7 @@
     </div>
   
     <div class="container text-center" >
-        <div class="col-xs-6">
+        <div class="col-xs-6" id="sectionA">
             <div  class="row">
                 <img id="previewA" width="80" height="120"  />
             </div>
@@ -74,7 +74,7 @@
             <input type="hidden" id="inputA">
         </div>
 
-        <div class="col-xs-6">
+        <div class="col-xs-6" id="sectionB">
             <div class="row">
                 <img id="previewB" width="80" height="120"  />
             </div>
@@ -96,10 +96,34 @@
              <a class="btn btn-primary" onclick="javascript:send();" href="javascript:;">登陆</a>
     </div>
     <script type="text/javascript">  
+        var sessionId = null;
+
+        $(document).ready(function($) {
+             if (!sessionId && typeof(sessionId)!="undefined" && sessionId!=0) {
+                $("#sectionA").show();
+                $("#sectionB").attr('class', 'col-xs-6');
+            } else {
+              $("#sectionA").hide();
+              $("#sectionB").removeAttr("class");
+            }
+        });
+       
             function send() {
                 if($("#inputA").val() && $("#inputB").val()) {
                     // 发送信息
-                    alert("发送  "+ $("#inputA").val() + " " + $("#inputB").val());
+                  //  alert("发送  "+ $("#inputA").val() + " " + $("#inputB").val());
+                    $.ajax({
+                        url: '',
+                        dataType: 'json',
+                        type: 'post',
+                        success: function(data) {
+
+                        },
+                        error: function(data) {
+                          alert("出错了！");
+                          console.log(data);
+                        }
+                      });
                 }
             }
             function setImagePreview(el) {  
