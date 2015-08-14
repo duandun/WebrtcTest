@@ -11,6 +11,11 @@
 	<script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.js"></script>
 	<!-- <script type="text/javascript" src="/libs/angularjs/angular.js"></script>
 -->
+  <link rel="stylesheet" href="/libs/patternLock/patternLock.css">
+  <script type="text/javascript" src="/libs/jquery/dist/jquery.js"></script>
+  <script type="text/javascript" src="/libs/patternLock/patternLock.js"></script>
+
+
   <script type="text/javascript" src="/libs/jsqrcode/src/grid.js"></script>
   <script type="text/javascript" src="/libs/jsqrcode/src/version.js"></script>
   <script type="text/javascript" src="/libs/jsqrcode/src/detector.js"></script>
@@ -30,7 +35,7 @@
   <script type="text/javascript" src="/libs/jsqrcode/src/databr.js"></script>
 </head>
 <body class="container text-center" >
-<div class="row">
+
 	<div class="row" >
 		<video id="video"  height="200" autoplay style="display:none"></video>
 	</div>
@@ -56,12 +61,19 @@
 	</div>
 
   <div class="row">
-    <div style="margin-top:20px;">
+    <div style="margin-top:20px;margin-bottom:20px;">
       <button role="button" id="send" class="btn btn-primary"  disabled="disabled">登陆</button>
+      <button role="button" id="tempSave" class="btn btn-primary" >暂存</button>
+      <button role="button" id="delCookie" class="btn btn-primary" >删除cookie</button>
     </div>
   </div>
-</div>
+
+  <div class="row" style="margin-top: 20px;">
+    <div id="patternContainer" style="margin:auto;"></div>
+  </div>
+
 <script type="text/javascript"> 
+
 
     var sessionId = null;
     //点击登录，向服务器发送信息
@@ -84,7 +96,71 @@
        }
     });
 
+ // 设置 cookie 
+　function setCookie(c_name, value, expiredays){
+ 　　　var exdate=new Date();
+ 　　　exdate.setHours(exdate.getHours() + expiredays);
+　　　document.cookie = c_name+ "=" + escape(value) + ((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+　　}
+// 获取 cookie
+  function getCookie(c_name){
+  　　　　if (document.cookie.length>0){　　//先查询cookie是否为空，为空就return ""
+  　　　　　　c_start=document.cookie.indexOf(c_name + "=");　　//通过String对象的indexOf()来检查这个cookie是否存在，不存在就为 -1　
+  　　　　　　if (c_start!=-1){ 
+  　　　　　　　　c_start=c_start + c_name.length+1;
+  　　　　　　　　c_end=document.cookie.indexOf(";",c_start);
+  　　　　　　　　if (c_end==-1) {
+                    c_end=document.cookie.length;
+                  }　
+  　　　　　　　　return unescape(document.cookie.substring(c_start,c_end));
+  　　　　　　} 
+  　　　　}
+  　　　　return '';
+  　　}　
+  //删除 cookie
+function delCookie(name) { 
+    var exp = new Date(); 
+    exp.setTime(exp.getTime() - 1); 
+    var cval=getCookie(name); 
+    if(cval!=null) 
+        document.cookie= name + "="+cval+";expires="+exp.toGMTString(); 
+} 
+
 window.addEventListener("DOMContentLoaded", function() {
+
+    var _pattern = '';
+    var count = 0;
+    
+    $("#delCookie").click(function() {
+      delCookie('application');
+    });
+
+    $("#tempSave").click(function() {
+      var token = $("#inputB").val();
+
+      if ((!token && typeof(token)!="undefined" && token!=0)||token === '') {
+        return;
+      } else {
+          $("#patternContainer").show();
+          var lock = new PatternLock("#patternContainer", {
+          onDraw: function(pattern) {
+            count++;
+            setTimeout(function() {
+              lock.reset();
+              if (count === 1) {
+                  _pattern = pattern;
+                  lock.checkForPattern(_pattern, function() {
+                 //   alert("You unlocked your app");
+                    var application = token + '&' + _pattern;
+                    setCookie('application', application, 1);
+                });
+              }
+            }, 1200);
+          }
+        });
+      }  
+    });
+
     if (!sessionId && typeof(sessionId)!="undefined" && sessionId!=0) {
         $("#canvasA").parent().show();
         $("#btn1").parent().show();
@@ -95,6 +171,43 @@ window.addEventListener("DOMContentLoaded", function() {
       $("#canvasB").parent().removeAttr("class");
       $("#btn1").parent().hide();
       $("#btn2").parent().removeAttr("class");
+    }
+
+    // 判断是否有cookie
+    var appCookie = getCookie('application');
+    if(appCookie != '') {
+      $("#canvasB").parent().hide();
+  
+      $("#btn2").parent().hide();
+      $("#patternContainer").show();
+
+      var s_start=appCookie.indexOf('&');　
+      var s_end = appCookie.length;　
+      var s_pattern = appCookie.substring(s_start+1, s_end);
+
+      var token = appCookie.substring(0, s_start);
+      alert(token);
+      
+
+      var lock = new PatternLock("#patternContainer", {
+          onDraw: function(pattern) {           
+            setTimeout(function() {
+              lock.reset();
+              //alert(s_pattern);
+            }, 1000);
+          }
+        });
+
+       lock.checkForPattern(s_pattern, function() {
+              alert('成功');
+              $("#inputB").val(token);
+        });
+
+    } else {
+      $("#canvasB").parent().show();
+ 
+      $("#btn2").parent().show();
+      $("#patternContainer").hide();
     }
 
     // Grab elements, create settings, etc.
